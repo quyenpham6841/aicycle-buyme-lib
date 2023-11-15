@@ -24,6 +24,9 @@ class $AssetsGifGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/ic_camera.svg
+  SvgGenImage get icCamera => const SvgGenImage('assets/icons/ic_camera.svg');
+
   /// File path: assets/icons/ic_check.svg
   SvgGenImage get icCheck => const SvgGenImage('assets/icons/ic_check.svg');
 
@@ -56,6 +59,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+        icCamera,
         icCheck,
         icCheckCircle,
         icCheckFilled,
@@ -67,11 +71,22 @@ class $AssetsIconsGen {
       ];
 }
 
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  /// File path: assets/images/car.png
+  AssetGenImage get car => const AssetGenImage('assets/images/car.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [car];
+}
+
 class Assets {
   Assets._();
 
   static const $AssetsGifGen gif = $AssetsGifGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsImagesGen images = $AssetsImagesGen();
 }
 
 class AssetGenImage {

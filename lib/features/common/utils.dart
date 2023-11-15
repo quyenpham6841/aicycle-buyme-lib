@@ -1,3 +1,4 @@
+import 'package:aicycle_buyme_lib/aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -66,23 +67,23 @@ void _showSnackBar(
   // haptic();
   switch (type) {
     case SnackBarType.success:
-      icon = Assets.icons.icCheckFilled.svg();
+      icon = Assets.icons.icCheckFilled.svg(package: packageName);
       color = CColors.greenA500;
       break;
     case SnackBarType.error:
-      icon = Assets.icons.icErrorFilled.svg();
+      icon = Assets.icons.icErrorFilled.svg(package: packageName);
       color = CColors.redA500;
       break;
     case SnackBarType.info:
-      icon = Assets.icons.icInfoFilled.svg();
+      icon = Assets.icons.icInfoFilled.svg(package: packageName);
       color = CColors.primaryA500;
       break;
     case SnackBarType.warning:
-      icon = Assets.icons.icWarningFilled.svg();
+      icon = Assets.icons.icWarningFilled.svg(package: packageName);
       color = CColors.orangeA500;
       break;
     default:
-      icon = Assets.icons.icWarningFilled.svg();
+      icon = Assets.icons.icWarningFilled.svg(package: packageName);
       color = CColors.greenA500;
       break;
   }

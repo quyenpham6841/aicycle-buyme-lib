@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
+import '../../aicycle_buyme_lib.dart';
 import '../../generated/assets.gen.dart';
 import 'base_controller.dart';
 import 'themes/c_colors.dart';
@@ -75,7 +76,11 @@ class LoadingView<T> extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Assets.gif.loading.image(height: 80, fit: BoxFit.contain),
+                      Assets.gif.loading.image(
+                        height: 80,
+                        fit: BoxFit.contain,
+                        package: packageName,
+                      ),
                       const Gap(8),
                       Text(
                         'Đang xử lý dữ liệu, vui lòng chờ.',

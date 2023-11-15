@@ -96,19 +96,19 @@ extension CarPartDirectionEnumExt on CarPartDirectionEnum {
 
   String get buyMeTitle {
     if (this == CarPartDirectionEnum.d45RightFront) {
-      return "rightFront45_buyme";
+      return "Góc trước ghế phụ";
     }
     if (this == CarPartDirectionEnum.d45LeftFront) {
-      return "leftFront45_buyme";
+      return "Góc trước ghế lái";
     }
     if (this == CarPartDirectionEnum.d45RightBack) {
-      return "rightBack45_buyme";
+      return "Góc sau ghế phụ";
     }
     if (this == CarPartDirectionEnum.leftDev ||
         this == CarPartDirectionEnum.leftProd) {
-      return "guideLeft";
+      return "Tem đăng kiểm";
     }
-    return "leftBack45_buyme";
+    return "Góc sau ghế lái";
   }
 
   String get cathayTitle {
