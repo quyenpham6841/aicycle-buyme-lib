@@ -1,14 +1,22 @@
+import 'package:aicycle_buyme_lib/enum/app_state.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../network/api_error.dart';
-import 'utils.dart';
 
-const double maskOpacity = 0.3;
+class BaseStatus {
+  final String? message;
+  final AppState state;
+
+  BaseStatus({
+    required this.message,
+    this.state = AppState.init,
+  });
+}
 
 abstract class BaseController extends FullLifeCycleController {
   final RxBool isLoading = true.obs;
+  final Rx<BaseStatus> status = Rx<BaseStatus>(BaseStatus(message: null));
 
   @override
   void onInit() {
@@ -19,18 +27,6 @@ abstract class BaseController extends FullLifeCycleController {
   void onRefresh() async {}
 
   void onLoading() async {}
-
-  @protected
-  void showError({
-    String? message,
-    APIErrors? error,
-  }) =>
-      Utils.instance.showError(
-        message: message,
-        error: error,
-      );
-  @protected
-  void showSuccess(String message) => Utils.instance.showSuccess(message);
 
   void processUsecaseResult<T>({
     required Either<APIErrors, T> result,
@@ -44,14 +40,22 @@ abstract class BaseController extends FullLifeCycleController {
       isLoading(false);
       if (shouldShowError ?? true && error is! NoMessageError) {
         if (error is NoInternetError) {
-          Utils.instance.showError(
-            error: error,
+          // Utils.instance.showError(
+          //   error: error,
+          //   message: 'No internet',
+          // );
+          status.value = BaseStatus(
             message: 'No internet',
+            state: AppState.failed,
           );
         } else {
-          Utils.instance.showError(
-            error: error,
+          // Utils.instance.showError(
+          //   error: error,
+          //   message: error.details.toString(),
+          // );
+          status.value = BaseStatus(
             message: error.details.toString(),
+            state: AppState.failed,
           );
         }
       }

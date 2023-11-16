@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use_from_same_package
 
+import 'package:aicycle_buyme_lib/features/camera/presentation/camera_page.dart';
 import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -23,21 +24,19 @@ class CarPosition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scrWidth = MediaQuery.of(context).size.width;
-    late final String? image;
-    if (images?.isNotEmpty == true) {
-      image = images
-          ?.firstWhere(
-            (e) =>
-                e.directionSlug == direction.excelId.toString() ||
-                e.directionId == direction.id.toString(),
-            orElse: () => const BuyMeImage(imageUrl: ''),
-          )
-          .imageUrl;
-    } else {
-      image = null;
-    }
+    final String? image = images
+        ?.firstWhere(
+          (e) =>
+              e.directionSlug == direction.excelId.toString() ||
+              e.directionId == direction.id.toString(),
+          orElse: () => const BuyMeImage(),
+        )
+        .imageUrl;
+
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CameraPage(),
+      )),
       child: Column(
         children: [
           image == null

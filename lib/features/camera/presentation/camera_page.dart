@@ -1,7 +1,11 @@
+import '../../common/base_widget.dart';
+import '../../common/c_loading_view.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../common/themes/c_colors.dart';
 import '../controller/camera_page_controller.dart';
 
 class CameraPage extends StatefulWidget {
@@ -11,15 +15,13 @@ class CameraPage extends StatefulWidget {
   State<CameraPage> createState() => _CameraPageState();
 }
 
-class _CameraPageState extends State<CameraPage> {
-  late final CameraPageController controller;
+class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
   @override
-  void initState() {
-    super.initState();
+  CameraPageController provideController() {
     if (Get.isRegistered<CameraPageController>()) {
-      controller = Get.find<CameraPageController>();
+      return Get.find<CameraPageController>();
     } else {
-      controller = Get.put(CameraPageController());
+      return Get.put(CameraPageController());
     }
   }
 
@@ -31,8 +33,6 @@ class _CameraPageState extends State<CameraPage> {
         automaticallyImplyLeading: true,
         elevation: 0,
         backgroundColor: Colors.black,
-        // leadingWidth: 0,
-        // bottom: _tabs(),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -62,6 +62,47 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
         ],
+      ),
+      body: LoadingView<CameraPageController>(
+        child: GetBuilder<CameraPageController>(
+          id: 'camera',
+          builder: (ctrl) {
+            if (controller.cameraController == null ||
+                controller.cameraController?.value.isInitialized != true) {
+              return const SizedBox.expand(
+                child: Center(
+                  child: CupertinoActivityIndicator(color: CColors.white),
+                ),
+              );
+            }
+            final scale = 1 /
+                (controller.cameraController!.value.aspectRatio *
+                    MediaQuery.of(context).size.aspectRatio);
+            return RotatedBox(
+              quarterTurns: 1,
+              child: Transform.scale(
+                scale: scale,
+                child: CameraPreview(
+                  controller.cameraController!,
+                  child: Stack(
+                    children: [
+                      // Positioned.fill(
+                      //   bottom: 100,
+                      //   top: 32,
+                      //   child: GuideFrame(
+                      //     carPartDirectionEnum:
+                      //         widget.argument.carPartDirectionEnum,
+                      //     rangeShot: 'longShot'.tr(),
+                      //     showDirectionInfo: false,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:aicycle_buyme_lib/aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../generated/assets.gen.dart';
 import '../../network/api_error.dart';
@@ -16,13 +17,15 @@ class Utils {
 
   static void dismissKeyboard() => Get.focusScope?.unfocus();
 
-  void showError({
+  void showError(
+    BuildContext context, {
     String? message,
     APIErrors? error,
     bool? keepCurrentDialogOpen,
     Widget? prefix,
   }) {
     _showSnackBar(
+      context,
       message ?? '',
       type: SnackBarType.error,
       prefix: prefix,
@@ -30,12 +33,14 @@ class Utils {
   }
 
   void showSuccess(
+    BuildContext context,
     String message, {
     APIErrors? error,
     bool? keepCurrentDialogOpen,
     Widget? prefix,
   }) {
     _showSnackBar(
+      context,
       message,
       type: SnackBarType.success,
       prefix: prefix,
@@ -43,12 +48,14 @@ class Utils {
   }
 
   void showWarning(
+    BuildContext context,
     String message, {
     APIErrors? error,
     bool? keepCurrentDialogOpen,
     Widget? prefix,
   }) {
     _showSnackBar(
+      context,
       message,
       type: SnackBarType.warning,
       prefix: prefix,
@@ -57,6 +64,7 @@ class Utils {
 }
 
 void _showSnackBar(
+  BuildContext context,
   String message, {
   SnackBarType type = SnackBarType.success,
   int duration = 3,
@@ -90,7 +98,8 @@ void _showSnackBar(
   if (prefix != null) {
     icon = prefix;
   }
-  Get.showSnackbar(
+  showTopSnackBar(
+    Overlay.of(context),
     GetSnackBar(
       duration: Duration(seconds: duration),
       snackPosition: SnackPosition.TOP,
@@ -111,4 +120,25 @@ void _showSnackBar(
       ),
     ),
   );
+  // Get.showSnackbar(
+  //   GetSnackBar(
+  //     duration: Duration(seconds: duration),
+  //     snackPosition: SnackPosition.TOP,
+  //     backgroundColor: color,
+  //     margin: const EdgeInsets.all(16),
+  //     borderRadius: 8,
+  //     messageText: Row(
+  //       children: [
+  //         icon,
+  //         const Gap(16),
+  //         Expanded(
+  //           child: Text(
+  //             message,
+  //             style: CTextStyles.baseWhite.s14,
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ),
+  // );
 }

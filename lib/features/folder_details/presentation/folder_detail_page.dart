@@ -8,6 +8,7 @@ import '../../../aicycle_buyme_lib.dart';
 import '../../../enum/car_part_direction.dart';
 import '../../../generated/assets.gen.dart';
 import '../../common/app_string.dart';
+import '../../common/base_widget.dart';
 import '../../common/c_button.dart';
 import '../../common/c_loading_view.dart';
 import '../../common/themes/c_colors.dart';
@@ -22,15 +23,14 @@ class FolderDetailPage extends StatefulWidget {
   State<FolderDetailPage> createState() => _FolderDetailPageState();
 }
 
-class _FolderDetailPageState extends State<FolderDetailPage> {
-  late final FolderDetailController controller;
+class _FolderDetailPageState
+    extends BaseState<FolderDetailPage, FolderDetailController> {
   @override
-  void initState() {
-    super.initState();
+  FolderDetailController provideController() {
     if (Get.isRegistered<FolderDetailController>()) {
-      controller = Get.find<FolderDetailController>();
+      return Get.find<FolderDetailController>();
     } else {
-      controller = Get.put(FolderDetailController());
+      return Get.put(FolderDetailController());
     }
   }
 
