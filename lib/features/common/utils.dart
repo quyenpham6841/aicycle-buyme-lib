@@ -1,4 +1,4 @@
-import 'package:aicycle_buyme_lib/aicycle_buyme_lib.dart';
+import '../../aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

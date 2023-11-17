@@ -1,4 +1,4 @@
-import 'package:aicycle_buyme_lib/enum/app_state.dart';
+import '../../enum/app_state.dart';
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
 

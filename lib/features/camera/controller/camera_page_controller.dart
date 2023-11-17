@@ -1,6 +1,6 @@
-import 'package:aicycle_buyme_lib/features/common/base_controller.dart';
+import '../../common/base_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
@@ -9,7 +9,10 @@ import '../../folder_details/controller/folder_detail_controller.dart';
 
 class CameraPageController extends BaseController {
   CameraController? cameraController;
+  var isInActive = false.obs;
+  var showGuideFrame = true.obs;
   var flashMode = Rx<FlashMode>(FlashMode.off);
+  var previewFile = Rx<XFile?>(null);
 
   @override
   void onInit() {
@@ -39,9 +42,11 @@ class CameraPageController extends BaseController {
       return;
     }
     if (state == AppLifecycleState.inactive) {
+      isInActive(true);
       cameraCtrl.dispose();
       update(['camera']);
     } else if (state == AppLifecycleState.resumed) {
+      isInActive(false);
       onNewCameraSelected(cameraCtrl.description);
     }
   }
@@ -70,7 +75,7 @@ class CameraPageController extends BaseController {
     });
     try {
       await cameraCtrl.initialize();
-      cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+      // cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
       isLoading(false);
     } on CameraException catch (_) {
       isLoading(false);
@@ -91,4 +96,6 @@ class CameraPageController extends BaseController {
       flashMode.value = FlashMode.off;
     }
   }
+
+  void takePhoto() {}
 }
