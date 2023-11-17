@@ -77,8 +77,170 @@ class $AssetsImagesGen {
   /// File path: assets/images/car.png
   AssetGenImage get car => const AssetGenImage('assets/images/car.png');
 
+  /// File path: assets/images/hatchback_back.png
+  AssetGenImage get hatchbackBack =>
+      const AssetGenImage('assets/images/hatchback_back.png');
+
+  /// File path: assets/images/hatchback_d45LeftBack.png
+  AssetGenImage get hatchbackD45LeftBack =>
+      const AssetGenImage('assets/images/hatchback_d45LeftBack.png');
+
+  /// File path: assets/images/hatchback_d45LeftFront.png
+  AssetGenImage get hatchbackD45LeftFront =>
+      const AssetGenImage('assets/images/hatchback_d45LeftFront.png');
+
+  /// File path: assets/images/hatchback_d45RightBack.png
+  AssetGenImage get hatchbackD45RightBack =>
+      const AssetGenImage('assets/images/hatchback_d45RightBack.png');
+
+  /// File path: assets/images/hatchback_d45RightFront.png
+  AssetGenImage get hatchbackD45RightFront =>
+      const AssetGenImage('assets/images/hatchback_d45RightFront.png');
+
+  /// File path: assets/images/hatchback_front.png
+  AssetGenImage get hatchbackFront =>
+      const AssetGenImage('assets/images/hatchback_front.png');
+
+  /// File path: assets/images/hatchback_leftBack.png
+  AssetGenImage get hatchbackLeftBack =>
+      const AssetGenImage('assets/images/hatchback_leftBack.png');
+
+  /// File path: assets/images/hatchback_leftFront.png
+  AssetGenImage get hatchbackLeftFront =>
+      const AssetGenImage('assets/images/hatchback_leftFront.png');
+
+  /// File path: assets/images/hatchback_rightBack.png
+  AssetGenImage get hatchbackRightBack =>
+      const AssetGenImage('assets/images/hatchback_rightBack.png');
+
+  /// File path: assets/images/hatchback_rightFront.png
+  AssetGenImage get hatchbackRightFront =>
+      const AssetGenImage('assets/images/hatchback_rightFront.png');
+
+  /// File path: assets/images/ic_frame_off.png
+  AssetGenImage get icFrameOff =>
+      const AssetGenImage('assets/images/ic_frame_off.png');
+
+  /// File path: assets/images/ic_frame_on.png
+  AssetGenImage get icFrameOn =>
+      const AssetGenImage('assets/images/ic_frame_on.png');
+
+  /// File path: assets/images/sedan_back.png
+  AssetGenImage get sedanBack =>
+      const AssetGenImage('assets/images/sedan_back.png');
+
+  /// File path: assets/images/sedan_d45LeftBack.png
+  AssetGenImage get sedanD45LeftBack =>
+      const AssetGenImage('assets/images/sedan_d45LeftBack.png');
+
+  /// File path: assets/images/sedan_d45LeftFront.png
+  AssetGenImage get sedanD45LeftFront =>
+      const AssetGenImage('assets/images/sedan_d45LeftFront.png');
+
+  /// File path: assets/images/sedan_d45RightBack.png
+  AssetGenImage get sedanD45RightBack =>
+      const AssetGenImage('assets/images/sedan_d45RightBack.png');
+
+  /// File path: assets/images/sedan_d45RightFront.png
+  AssetGenImage get sedanD45RightFront =>
+      const AssetGenImage('assets/images/sedan_d45RightFront.png');
+
+  /// File path: assets/images/sedan_front.png
+  AssetGenImage get sedanFront =>
+      const AssetGenImage('assets/images/sedan_front.png');
+
+  /// File path: assets/images/sedan_leftBack.png
+  AssetGenImage get sedanLeftBack =>
+      const AssetGenImage('assets/images/sedan_leftBack.png');
+
+  /// File path: assets/images/sedan_leftFront.png
+  AssetGenImage get sedanLeftFront =>
+      const AssetGenImage('assets/images/sedan_leftFront.png');
+
+  /// File path: assets/images/sedan_rightBack.png
+  AssetGenImage get sedanRightBack =>
+      const AssetGenImage('assets/images/sedan_rightBack.png');
+
+  /// File path: assets/images/sedan_rightFront.png
+  AssetGenImage get sedanRightFront =>
+      const AssetGenImage('assets/images/sedan_rightFront.png');
+
+  /// File path: assets/images/suv_back.png
+  AssetGenImage get suvBack =>
+      const AssetGenImage('assets/images/suv_back.png');
+
+  /// File path: assets/images/suv_d45LeftBack.png
+  AssetGenImage get suvD45LeftBack =>
+      const AssetGenImage('assets/images/suv_d45LeftBack.png');
+
+  /// File path: assets/images/suv_d45LeftFront.png
+  AssetGenImage get suvD45LeftFront =>
+      const AssetGenImage('assets/images/suv_d45LeftFront.png');
+
+  /// File path: assets/images/suv_d45RightBack.png
+  AssetGenImage get suvD45RightBack =>
+      const AssetGenImage('assets/images/suv_d45RightBack.png');
+
+  /// File path: assets/images/suv_d45RightFront.png
+  AssetGenImage get suvD45RightFront =>
+      const AssetGenImage('assets/images/suv_d45RightFront.png');
+
+  /// File path: assets/images/suv_front.png
+  AssetGenImage get suvFront =>
+      const AssetGenImage('assets/images/suv_front.png');
+
+  /// File path: assets/images/suv_leftBack.png
+  AssetGenImage get suvLeftBack =>
+      const AssetGenImage('assets/images/suv_leftBack.png');
+
+  /// File path: assets/images/suv_leftFront.png
+  AssetGenImage get suvLeftFront =>
+      const AssetGenImage('assets/images/suv_leftFront.png');
+
+  /// File path: assets/images/suv_rightBack.png
+  AssetGenImage get suvRightBack =>
+      const AssetGenImage('assets/images/suv_rightBack.png');
+
+  /// File path: assets/images/suv_rightFront.png
+  AssetGenImage get suvRightFront =>
+      const AssetGenImage('assets/images/suv_rightFront.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [car];
+  List<AssetGenImage> get values => [
+        car,
+        hatchbackBack,
+        hatchbackD45LeftBack,
+        hatchbackD45LeftFront,
+        hatchbackD45RightBack,
+        hatchbackD45RightFront,
+        hatchbackFront,
+        hatchbackLeftBack,
+        hatchbackLeftFront,
+        hatchbackRightBack,
+        hatchbackRightFront,
+        icFrameOff,
+        icFrameOn,
+        sedanBack,
+        sedanD45LeftBack,
+        sedanD45LeftFront,
+        sedanD45RightBack,
+        sedanD45RightFront,
+        sedanFront,
+        sedanLeftBack,
+        sedanLeftFront,
+        sedanRightBack,
+        sedanRightFront,
+        suvBack,
+        suvD45LeftBack,
+        suvD45LeftFront,
+        suvD45RightBack,
+        suvD45RightFront,
+        suvFront,
+        suvLeftBack,
+        suvLeftFront,
+        suvRightBack,
+        suvRightFront
+      ];
 }
 
 class Assets {

@@ -1,7 +1,8 @@
 // ignore_for_file: deprecated_member_use_from_same_package
 
-import 'package:aicycle_buyme_lib/features/camera/presentation/camera_page.dart';
-import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
+import '../../../../enum/car_model.dart';
+import '../../../camera/presentation/camera_page.dart';
+import '../../../common/themes/c_textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -35,7 +36,13 @@ class CarPosition extends StatelessWidget {
 
     return InkWell(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => CameraPage(),
+        builder: (context) => CameraPage(
+          argument: BuyMeCameraArgument(
+            carPartDirectionEnum: direction,
+            carModelEnum: CarModelEnum.kiaMorning,
+            claimId: 1,
+          ),
+        ),
       )),
       child: Column(
         children: [

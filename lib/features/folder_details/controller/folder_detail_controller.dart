@@ -1,4 +1,4 @@
-import 'package:aicycle_buyme_lib/types/buy_me_image_model.dart';
+import '../../../types/buy_me_image_model.dart';
 
 import '../../common/base_controller.dart';
 import '../../../types/check_car_model.dart';

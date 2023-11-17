@@ -1,5 +1,5 @@
-import 'package:aicycle_buyme_lib/features/common/themes/c_colors.dart';
-import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
+import './themes/c_colors.dart';
+import './themes/c_textstyle.dart';
 import 'package:flutter/material.dart';
 
 class CButton extends StatelessWidget {

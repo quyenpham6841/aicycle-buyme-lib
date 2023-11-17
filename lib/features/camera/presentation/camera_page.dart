@@ -1,3 +1,5 @@
+import '../../../enum/car_model.dart';
+import '../../../enum/car_part_direction.dart';
 import '../../common/base_widget.dart';
 import '../../common/c_loading_view.dart';
 import 'package:camera/camera.dart';
@@ -7,9 +9,24 @@ import 'package:get/get.dart';
 
 import '../../common/themes/c_colors.dart';
 import '../controller/camera_page_controller.dart';
+import 'widgets/buy_me_camera_bottom_bar.dart';
+import 'widgets/guide_frame.dart';
+
+class BuyMeCameraArgument {
+  final CarPartDirectionEnum carPartDirectionEnum;
+  final CarModelEnum carModelEnum;
+  final int claimId;
+
+  BuyMeCameraArgument({
+    required this.carPartDirectionEnum,
+    required this.carModelEnum,
+    required this.claimId,
+  });
+}
 
 class CameraPage extends StatefulWidget {
-  const CameraPage({super.key});
+  const CameraPage({super.key, required this.argument});
+  final BuyMeCameraArgument argument;
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -32,6 +49,7 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
+        iconTheme: const IconThemeData(color: CColors.white),
         backgroundColor: Colors.black,
         actions: [
           Padding(
@@ -67,7 +85,8 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
         child: GetBuilder<CameraPageController>(
           id: 'camera',
           builder: (ctrl) {
-            if (controller.cameraController == null ||
+            if (controller.isInActive.isTrue ||
+                controller.cameraController == null ||
                 controller.cameraController?.value.isInitialized != true) {
               return const SizedBox.expand(
                 child: Center(
@@ -75,30 +94,58 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                 ),
               );
             }
+            final frameAspectRatio = MediaQuery.of(context).size.width /
+                (MediaQuery.of(context).size.height - kToolbarHeight);
             final scale = 1 /
                 (controller.cameraController!.value.aspectRatio *
-                    MediaQuery.of(context).size.aspectRatio);
-            return RotatedBox(
-              quarterTurns: 1,
-              child: Transform.scale(
-                scale: scale,
-                child: CameraPreview(
-                  controller.cameraController!,
-                  child: Stack(
-                    children: [
-                      // Positioned.fill(
-                      //   bottom: 100,
-                      //   top: 32,
-                      //   child: GuideFrame(
-                      //     carPartDirectionEnum:
-                      //         widget.argument.carPartDirectionEnum,
-                      //     rangeShot: 'longShot'.tr(),
-                      //     showDirectionInfo: false,
-                      //   ),
-                      // ),
-                    ],
+                    frameAspectRatio);
+            return SafeArea(
+              child: Stack(
+                children: [
+                  /// camera view
+                  Transform.scale(
+                    scale: scale,
+                    child: CameraPreview(
+                      controller.cameraController!,
+                    ),
                   ),
-                ),
+                  Obx(() {
+                    if (controller.showGuideFrame.isTrue &&
+                        controller.previewFile() == null &&
+                        widget.argument.carPartDirectionEnum.id != 31 &&
+                        widget.argument.carPartDirectionEnum.id != 22) {
+                      return Positioned.fill(
+                        bottom: 100,
+                        top: 32,
+                        child: GuideFrame(
+                          carPartDirectionEnum:
+                              widget.argument.carPartDirectionEnum,
+                          carModelEnum: CarModelEnum.kiaMorning,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+
+                  /// bottom bar buttons
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Obx(
+                      () => controller.previewFile() == null
+                          ? BuyMeCameraBottomBar(
+                              previewFile: controller.previewFile(),
+                              showToggleFrame: widget
+                                          .argument.carPartDirectionEnum.id !=
+                                      31 &&
+                                  widget.argument.carPartDirectionEnum.id != 22,
+                              onToggleFrameCallBack: controller.showGuideFrame,
+                              takePhoto: controller.takePhoto,
+                              pickImage: () {},
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+                ],
               ),
             );
           },
