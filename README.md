@@ -35,3 +35,14 @@ An Aicycle BuyMe package for Aicycle Insurance's partners.
 ```dart
 import 'package:aicycle_buyme_lib/aicycle_buyme_lib.dart';
 ```
+
+### Required
+```dart
+Future<void> main() async {
+  /// add this two lines below
+  WidgetsFlutterBinding.ensureInitialized();
+  await AICycle.initial();
+
+  runApp(const CameraApp());
+}
+```

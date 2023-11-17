@@ -14,7 +14,7 @@ class FolderDetailController extends BaseController {
   @override
   void onReady() async {
     WidgetsFlutterBinding.ensureInitialized();
-    cameras = await availableCameras();
+    // cameras = await availableCameras();
     super.onReady();
   }
 }
