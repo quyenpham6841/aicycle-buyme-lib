@@ -5,4 +5,5 @@ abstract class BaseEndpoint {
 
 abstract class Endpoint {
   static String get login => '';
+  static String get createFolder => '/claimfolders';
 }
