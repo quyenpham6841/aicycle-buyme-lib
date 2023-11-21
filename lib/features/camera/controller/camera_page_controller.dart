@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+
 import '../../common/base_controller.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
@@ -13,6 +17,8 @@ class CameraPageController extends BaseController {
   var showGuideFrame = true.obs;
   var flashMode = Rx<FlashMode>(FlashMode.off);
   var previewFile = Rx<XFile?>(null);
+  var showRetake = false.obs;
+  var isResizing = false.obs;
 
   @override
   void onInit() {
@@ -75,7 +81,9 @@ class CameraPageController extends BaseController {
     });
     try {
       await cameraCtrl.initialize();
-      // cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+      if (Platform.isIOS) {
+        cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+      }
       isLoading(false);
     } on CameraException catch (_) {
       isLoading(false);
@@ -97,5 +105,15 @@ class CameraPageController extends BaseController {
     }
   }
 
-  void takePhoto() {}
+  void takePhoto() async {
+    if (previewFile() == null) {
+      previewFile.value = await cameraController?.takePicture();
+    }
+  }
+
+  void retakePhoto() {
+    previewFile(null);
+    showRetake(false);
+    status(BaseStatus(message: null));
+  }
 }

@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:aicycle_buyme_lib/features/common/app_string.dart';
+import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
+
 import '../../../enum/car_model.dart';
 import '../../../enum/car_part_direction.dart';
 import '../../common/base_widget.dart';
@@ -10,6 +15,7 @@ import 'package:get/get.dart';
 import '../../common/themes/c_colors.dart';
 import '../controller/camera_page_controller.dart';
 import 'widgets/buy_me_camera_bottom_bar.dart';
+import 'widgets/buy_me_preview_image.dart';
 import 'widgets/guide_frame.dart';
 
 class BuyMeCameraArgument {
@@ -44,6 +50,7 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -121,6 +128,47 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                           carPartDirectionEnum:
                               widget.argument.carPartDirectionEnum,
                           carModelEnum: CarModelEnum.kiaMorning,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+
+                  /// Preview
+                  Obx(() {
+                    if (controller.previewFile() != null) {
+                      return RotatedBox(
+                        quarterTurns: Platform.isIOS ? 1 : 0,
+                        child: Stack(
+                          children: [
+                            BuyMePreviewImage(
+                              file: File(controller.previewFile()!.path),
+                              retake: controller.showRetake()
+                                  ? controller.retakePhoto
+                                  : null,
+                              save: () {},
+                            ),
+                            if (controller.isResizing())
+                              Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  width: screenWidth / 4,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        AppString.compressing,
+                                        style: CTextStyles.base.s14.whiteColor
+                                            .copyWith(
+                                                fontWeight: FontWeight.w500),
+                                      ),
+                                      const LinearProgressIndicator(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       );
                     }
