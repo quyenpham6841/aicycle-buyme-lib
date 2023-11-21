@@ -143,25 +143,27 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                   /// Preview
                   Obx(() {
                     if (controller.previewFile() != null) {
-                      return RotatedBox(
-                        quarterTurns: Platform.isIOS ? 1 : 0,
-                        child: Stack(
-                          children: [
-                            BuyMePreviewImage(
+                      return Stack(
+                        children: [
+                          RotatedBox(
+                            quarterTurns: Platform.isIOS ? 1 : 0,
+                            child: BuyMePreviewImage(
                               file: File(controller.previewFile()!.path),
                               retake: controller.showRetake()
                                   ? controller.retakePhoto
                                   : null,
                               save: () {},
                             ),
-                            if (controller.isResizing())
-                              Align(
-                                alignment: Alignment.center,
+                          ),
+                          if (controller.isResizing())
+                            RotatedBox(
+                              quarterTurns: 1,
+                              child: Center(
                                 child: Container(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   width: screenWidth / 4,
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         AppString.compressing,
@@ -174,8 +176,8 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                                   ),
                                 ),
                               ),
-                          ],
-                        ),
+                            ),
+                        ],
                       );
                     }
                     return const SizedBox.shrink();
@@ -194,7 +196,7 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                                   widget.argument.carPartDirectionEnum.id != 22,
                               onToggleFrameCallBack: controller.showGuideFrame,
                               takePhoto: controller.takePhoto,
-                              pickImage: () {},
+                              pickImage: controller.pickedPhoto,
                             )
                           : const SizedBox.shrink(),
                     ),

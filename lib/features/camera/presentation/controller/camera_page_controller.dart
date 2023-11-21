@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../../../common/base_controller.dart';
@@ -138,6 +139,22 @@ class CameraPageController extends BaseController {
     status(BaseStatus(message: null));
   }
 
+  void pickedPhoto() async {
+    if (previewFile() == null) {
+      previewFile.value = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100,
+      );
+      if (previewFile.value != null) {
+        isResizing(true);
+        var resizeFile = await Utils.compressImage(previewFile.value!, 100);
+        previewFile.value = resizeFile;
+        isResizing(false);
+        callEngine();
+      }
+    }
+  }
+
   void callEngine() async {
     if (previewFile() != null && argument != null) {
       /// Tính thời gian upload
@@ -161,7 +178,7 @@ class CameraPageController extends BaseController {
         (r) async {
           if (r.level == 'info' && r.filePath != null) {
             var callEngineRes = await callEngineUsecase(
-              claimId: 1,
+              claimId: argument!.claimId,
               imageName: basename(previewFile()!.path),
               filePath: r.filePath!,
               isCapDon: true,
@@ -213,8 +230,8 @@ class CameraPageController extends BaseController {
                 // );
                 status(
                   BaseStatus(
-                    message: 'pop',
-                    state: AppState.redirect,
+                    message: null,
+                    state: AppState.pop,
                   ),
                 );
               } else {
