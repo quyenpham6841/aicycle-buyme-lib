@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:aicycle_buyme_lib/features/common/logger.dart';
+import 'package:camera/camera.dart';
+
 import '../../aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:image/image.dart' as img;
 
 import '../../generated/assets.gen.dart';
 import '../../network/api_error.dart';
@@ -14,6 +20,47 @@ enum SnackBarType { success, error, info, warning }
 class Utils {
   Utils._();
   static final Utils instance = Utils._();
+
+  static Future<XFile> compressImage(XFile source, int quality) async {
+    File sourceFile = File(source.path);
+    try {
+      img.Image? input = await img.decodeImageFile(source.path);
+      // rotate image if android because camera image is landscape
+      if (input == null) {
+        return source;
+      }
+      if (Platform.isAndroid) {
+        input = img.copyRotate(input, angle: 90);
+      }
+      int imageWidth = input.width;
+      int imageHeight = input.height;
+      input = img.copyResize(
+        input,
+        width: input.height > input.width ? 1600 : 1080,
+        height: input.height > input.width ? 1080 : 1600,
+        maintainAspect: true,
+      );
+      var compressedXFile = XFile.fromData(
+        img.encodeJpg(input, quality: quality),
+        path: source.path,
+      );
+      var fileLength = await compressedXFile.length();
+      // Nếu vẫn lớn hơn 2MB thì giảm chất lượng ảnh
+      if (fileLength > 2000000) {
+        return await compressImage(compressedXFile, 90);
+      }
+      // var compressedSize = await _calculateImageSize(compressedFile);
+      logger.i(
+        'Resize successfully: ${sourceFile.readAsBytesSync().lengthInBytes / 1000000}MB to ${fileLength / 1000000}MB',
+      );
+      logger.i(
+        'Resize successfully:${imageWidth}x$imageHeight => ${input.width}x${input.height}',
+      );
+      return compressedXFile;
+    } catch (e) {
+      return source;
+    }
+  }
 
   static void dismissKeyboard() => Get.focusScope?.unfocus();
 

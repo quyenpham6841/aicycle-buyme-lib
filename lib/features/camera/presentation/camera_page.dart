@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../common/themes/c_colors.dart';
-import '../controller/camera_page_controller.dart';
+import 'controller/camera_page_controller.dart';
 import 'widgets/buy_me_camera_bottom_bar.dart';
 import 'widgets/buy_me_preview_image.dart';
 import 'widgets/guide_frame.dart';
@@ -39,6 +39,12 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
+  @override
+  void initState() {
+    super.initState();
+    controller.argument = widget.argument;
+  }
+
   @override
   CameraPageController provideController() {
     if (Get.isRegistered<CameraPageController>()) {
