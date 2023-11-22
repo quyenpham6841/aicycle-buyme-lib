@@ -15,8 +15,8 @@ class AICycle {
     required String token,
     required int externalClaimId,
   }) async {
-    final usecase = Get.find<CreateClaimFolderUseCase>();
-    final res =
-        await usecase.call(token: token, externalClaimId: externalClaimId);
+    final createFolderUseCase = Get.find<CreateClaimFolderUseCase>();
+    final res = await createFolderUseCase.call(
+        token: token, externalClaimId: externalClaimId);
   }
 }
