@@ -1,9 +1,9 @@
 import '../../../../network/api_request.dart';
 import '../../../../network/endpoints.dart';
 
-class ExampleAPI extends APIRequest {
+class CommonApi extends APIRequest {
   ///
-  ExampleAPI.login(String username, String password)
+  CommonApi.login(String username, String password)
       : super(
           endpoint: Endpoint.login,
           method: HTTPMethod.post,
