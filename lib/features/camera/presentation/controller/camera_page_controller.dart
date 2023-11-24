@@ -1,6 +1,6 @@
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -32,8 +32,11 @@ class CameraPageController extends BaseController {
   var showErrorDialog = false.obs;
   var isResizing = false.obs;
   var isConfidentLevelWarning = false.obs;
+  var damageAssessmentResponse = Rx<DamageAssessmentResponse?>(null);
   BuyMeCameraArgument? argument;
   DamageAssessmentResponse? cacheDamageResponse;
+  Map<String, dynamic> cacheValidationModel = {};
+  var isFromGallery = false.obs;
 
   @override
   void onInit() {
@@ -96,9 +99,9 @@ class CameraPageController extends BaseController {
     });
     try {
       await cameraCtrl.initialize();
-      if (Platform.isIOS) {
-        cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
-      }
+      // if (Platform.isIOS) {
+      //   cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+      // }
       isLoading(false);
     } on CameraException catch (_) {
       isLoading(false);
@@ -123,6 +126,7 @@ class CameraPageController extends BaseController {
   void takePhoto() async {
     if (previewFile.value == null) {
       previewFile.value = await cameraController?.takePicture();
+      isFromGallery.value = false;
       if (previewFile.value != null) {
         isResizing(true);
         var resizeFile = await Utils.compressImage(previewFile.value!, 100);
@@ -134,17 +138,19 @@ class CameraPageController extends BaseController {
   }
 
   void retakePhoto() {
-    previewFile(null);
+    previewFile.value = null;
     showRetake(false);
+    showErrorDialog(false);
     status(BaseStatus(message: null));
   }
 
   void pickedPhoto() async {
-    if (previewFile() == null) {
+    if (previewFile.value == null) {
       previewFile.value = await ImagePicker().pickImage(
         source: ImageSource.gallery,
         imageQuality: 100,
       );
+      isFromGallery.value = true;
       if (previewFile.value != null) {
         isResizing(true);
         var resizeFile = await Utils.compressImage(previewFile.value!, 100);
@@ -156,13 +162,13 @@ class CameraPageController extends BaseController {
   }
 
   void callEngine() async {
-    if (previewFile() != null && argument != null) {
+    if (previewFile.value != null && argument != null) {
       /// Tính thời gian upload
       isLoading(true);
       final Stopwatch timer = Stopwatch();
       timer.start();
       var uploadRes =
-          await uploadImageToS3Server(localFilePath: previewFile()!.path);
+          await uploadImageToS3Server(localFilePath: previewFile.value!.path);
       timer.stop();
       // Kết thúc
       uploadRes.fold(
@@ -177,94 +183,23 @@ class CameraPageController extends BaseController {
         },
         (r) async {
           if (r.level == 'info' && r.filePath != null) {
-            var callEngineRes = await callEngineUsecase(
-              claimId: argument!.claimId,
-              imageName: basename(previewFile()!.path),
-              filePath: r.filePath!,
-              isCapDon: true,
-              position: positionIds[0],
-              direction: argument!.carPartDirectionEnum.excelId,
-              vehiclePartExcelId: '',
+            await callEngineImpl(
+              localFilePath: previewFile.value!.path,
+              serverFilePath: r.filePath!,
               timeAppUpload: timer.elapsedMilliseconds / 1000,
-              utcTimeCreated: DateTime.now().toUtc().toIso8601String(),
             );
-
-            callEngineRes.fold((l) {
-              isLoading(false);
-
-              /// Code from engine
-              if (l.errorCodeFromEngine != null) {
-                status(
-                  BaseStatus(
-                    message: l.message.toString(),
-                    state: AppState.failed,
-                  ),
-                );
-                showRetake(false);
-                showErrorDialog(true);
-              } else {
-                status(
-                  BaseStatus(
-                    message: l.message.toString(),
-                    state: AppState.failed,
-                  ),
-                );
-                showRetake(true);
-              }
-            }, (r) {
-              isLoading(false);
-              if (r.errorCodeFromEngine == null || r.errorCodeFromEngine == 0) {
-                // getIt<EventBus>().fire(CallEngineEvent());
-                // getIt<EventBus>().fire(
-                //   BuyMeCallEngineEvent(
-                //     imageModel: ImageModel(
-                //       imageId: r.imageId?.toString(),
-                //       directionId: state.argument?.carPartDirectionEnum.id.toString(),
-                //       directionName: state.argument?.carPartDirectionEnum.title,
-                //       imageUrl: r.result?.imgUrl,
-                //       resizeImageUrl: r.result?.imgUrl,
-                //       imageSize: r.result?.imgSize?.map((e) => e ?? 0).toList(),
-                //       directionSlug: r.result?.extraInfor?.imageDirection,
-                //     ),
-                //   ),
-                // );
-                status(
-                  BaseStatus(
-                    message: null,
-                    state: AppState.pop,
-                  ),
-                );
-              } else {
-                cacheDamageResponse = r;
-
-                /// confident level thấp
-                if (r.errorCodeFromEngine == 66616) {
-                  status(
-                    BaseStatus(
-                      message: r.message,
-                      state: AppState.warning,
-                    ),
-                  );
-                  showRetake(false);
-                  isConfidentLevelWarning(true);
-                } else {
-                  status(
-                    BaseStatus(
-                      message: r.message,
-                      state: AppState.warning,
-                    ),
-                  );
-                  showRetake(false);
-                }
-              }
-            });
           }
 
           /// warning
           else if (r.level == 'warning') {
+            cacheValidationModel['localFilePath'] = previewFile.value!.path;
+            cacheValidationModel['serverFilePath'] = r.filePath;
+            cacheValidationModel['timeAppUpload'] =
+                timer.elapsedMilliseconds / 1000;
             isLoading(false);
+            showRetake(false);
             status(BaseStatus(
-              message: r.message,
+              message: r.message ?? 'Warning',
               state: AppState.warning,
             ));
           }
@@ -281,5 +216,150 @@ class CameraPageController extends BaseController {
         },
       );
     }
+  }
+
+  void engineWarningHandle(String action) async {
+    switch (action) {
+      case 'next':
+        if (cacheValidationModel['localFilePath'] != null &&
+            cacheValidationModel['serverFilePath'] != null) {
+          await callEngineImpl(
+            localFilePath: cacheValidationModel['localFilePath'],
+            serverFilePath: cacheValidationModel['serverFilePath'],
+            timeAppUpload: cacheValidationModel['timeAppUpload'],
+          );
+        } else {
+          status(BaseStatus(message: 'Hệ thống lỗi', state: AppState.failed));
+          damageAssessmentResponse.value = null;
+          previewFile.value = null;
+        }
+        break;
+      case 'save':
+        // getIt<EventBus>().fire(CallEngineEvent());
+        if (cacheDamageResponse != null) {
+          if (Get.isRegistered<FolderDetailController>()) {
+            final folderDetailController = Get.find<FolderDetailController>();
+          }
+          // getIt<EventBus>().fire(
+          //   BuyMeCallEngineEvent(
+          //     imageModel: ImageModel(
+          //       imageId: cacheDamageResponse?.imageId?.toString(),
+          //       directionId: state.argument?.carPartDirectionEnum.id.toString(),
+          //       directionName: state.argument?.carPartDirectionEnum.title,
+          //       imageUrl: cacheDamageResponse?.result?.imgUrl,
+          //       resizeImageUrl: cacheDamageResponse?.result?.imgUrl,
+          //     ),
+          //   ),
+          // );
+        }
+        status(BaseStatus(message: null, state: AppState.pop));
+        damageAssessmentResponse.value = cacheDamageResponse;
+        break;
+      case 'retake':
+        previewFile.value = null;
+        cacheValidationModel = {};
+        status(BaseStatus(message: null, state: AppState.idle));
+        damageAssessmentResponse.value = null;
+        showErrorDialog(false);
+        if (cacheDamageResponse != null) {
+          // cacheDamageResponse = null;
+          // await _homeUseCase
+          //     .deleteImageById(
+          //       imageId:
+          //           int.tryParse(cacheDamageResponse!.imageId.toString()) ?? 0,
+          //     )
+          //     .then((value) => cacheDamageResponse = null);
+        }
+        break;
+    }
+  }
+
+  Future<void> callEngineImpl({
+    required String localFilePath,
+    required String serverFilePath,
+    double? timeAppUpload,
+  }) async {
+    var callEngineRes = await callEngineUsecase(
+      claimId: argument!.claimId,
+      imageName: basename(localFilePath),
+      filePath: serverFilePath,
+      isCapDon: true,
+      position: positionIds[0],
+      direction: argument!.carPartDirectionEnum.excelId,
+      vehiclePartExcelId: '',
+      timeAppUpload: timeAppUpload,
+      utcTimeCreated: DateTime.now().toUtc().toIso8601String(),
+    );
+
+    callEngineRes.fold((l) {
+      isLoading(false);
+
+      /// Code from engine
+      if (l.errorCodeFromEngine != null) {
+        status(
+          BaseStatus(
+            message: l.message.toString(),
+            state: AppState.customError,
+          ),
+        );
+        showRetake(false);
+        showErrorDialog(true);
+      } else {
+        status(
+          BaseStatus(
+            message: l.message.toString(),
+            state: AppState.failed,
+          ),
+        );
+        showRetake(true);
+      }
+    }, (r) {
+      isLoading(false);
+      if (r.errorCodeFromEngine == null || r.errorCodeFromEngine == 0) {
+        // getIt<EventBus>().fire(CallEngineEvent());
+        // getIt<EventBus>().fire(
+        //   BuyMeCallEngineEvent(
+        //     imageModel: ImageModel(
+        //       imageId: r.imageId?.toString(),
+        //       directionId: state.argument?.carPartDirectionEnum.id.toString(),
+        //       directionName: state.argument?.carPartDirectionEnum.title,
+        //       imageUrl: r.result?.imgUrl,
+        //       resizeImageUrl: r.result?.imgUrl,
+        //       imageSize: r.result?.imgSize?.map((e) => e ?? 0).toList(),
+        //       directionSlug: r.result?.extraInfor?.imageDirection,
+        //     ),
+        //   ),
+        // );
+        status(
+          BaseStatus(
+            message: null,
+            state: AppState.pop,
+          ),
+        );
+      } else {
+        cacheDamageResponse = r;
+
+        /// confident level thấp
+        if (r.errorCodeFromEngine == 66616) {
+          status(
+            BaseStatus(
+              message: r.message,
+              state: AppState.warning,
+            ),
+          );
+          showRetake(false);
+          isConfidentLevelWarning(true);
+        } else {
+          status(
+            BaseStatus(
+              message: r.message,
+              state: AppState.customError,
+            ),
+          );
+          showRetake(false);
+          showErrorDialog(true);
+        }
+      }
+    });
   }
 }

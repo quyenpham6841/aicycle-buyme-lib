@@ -39,11 +39,13 @@ class CameraAPI extends APIRequest {
 
   CameraAPI.getImageUploadUrl({required String serverFilePath})
       : super(
-            endpoint: Endpoint.getImageUploadUrl,
-            method: HTTPMethod.post,
-            isBaseResponse: false,
-            isLogResponse: true,
-            body: {'filePaths': serverFilePath});
+          endpoint: Endpoint.getImageUploadUrl,
+          method: HTTPMethod.post,
+          isLogResponse: true,
+          body: {
+            'filePaths': [serverFilePath]
+          },
+        );
 
   CameraAPI.validateAfterUploadToS3({required String serverFilePath})
       : super(
