@@ -18,7 +18,9 @@ abstract class BaseState<W extends StatefulWidget, C extends BaseController>
         Utils.instance.showSuccess(context, state.message!);
       } else if (state.state == AppState.pop) {
         Navigator.pop(context);
-        Utils.instance.showError(context, message: state.message);
+        if (state.message != null) {
+          Utils.instance.showError(context, message: state.message);
+        }
       }
     });
   }

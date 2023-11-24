@@ -71,7 +71,6 @@ class CameraRepositoryImpl implements CameraRepository {
       if (uploadUrlRes.urls != null && uploadUrlRes.urls!.isNotEmpty) {
         var uploadEndpoint = uploadUrlRes.urls!.first.uploadUrl ?? '';
         // var imageData = await File(localFilePath).readAsBytes();
-        print(File(localFilePath).lengthSync());
 
         var s3Response = await Dio().put(
           uploadEndpoint,

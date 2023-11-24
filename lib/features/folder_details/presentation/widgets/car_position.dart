@@ -35,15 +35,17 @@ class CarPosition extends StatelessWidget {
         .imageUrl;
 
     return InkWell(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => CameraPage(
-          argument: BuyMeCameraArgument(
-            carPartDirectionEnum: direction,
-            carModelEnum: CarModelEnum.kiaMorning,
-            claimId: 1,
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CameraPage(
+            argument: BuyMeCameraArgument(
+              carPartDirectionEnum: direction,
+              carModelEnum: CarModelEnum.kiaMorning,
+              claimId: 13977,
+            ),
           ),
         ),
-      )),
+      ),
       child: Column(
         children: [
           image == null

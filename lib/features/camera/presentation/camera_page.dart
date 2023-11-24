@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:aicycle_buyme_lib/enum/app_state.dart';
+import 'package:aicycle_buyme_lib/features/camera/presentation/widgets/error_dialog.dart';
+import 'package:aicycle_buyme_lib/features/camera/presentation/widgets/warning_dialog.dart';
 import 'package:aicycle_buyme_lib/features/common/app_string.dart';
 import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
 
@@ -112,47 +115,52 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
             final scale = 1 /
                 (controller.cameraController!.value.aspectRatio *
                     frameAspectRatio);
-            return SafeArea(
-              child: Stack(
-                children: [
-                  /// camera view
-                  Transform.scale(
-                    scale: scale,
-                    child: CameraPreview(
-                      controller.cameraController!,
-                    ),
-                  ),
-                  Obx(() {
-                    if (controller.showGuideFrame.isTrue &&
-                        controller.previewFile() == null &&
-                        widget.argument.carPartDirectionEnum.id != 31 &&
-                        widget.argument.carPartDirectionEnum.id != 22) {
-                      return Positioned.fill(
-                        bottom: 100,
-                        top: 32,
-                        child: GuideFrame(
-                          carPartDirectionEnum:
-                              widget.argument.carPartDirectionEnum,
-                          carModelEnum: CarModelEnum.kiaMorning,
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
 
-                  /// Preview
-                  Obx(() {
-                    if (controller.previewFile() != null) {
+            /// camera view
+            return Stack(
+              children: [
+                Transform.scale(
+                  scale: scale,
+                  child: CameraPreview(
+                    controller.cameraController!,
+                  ),
+                ),
+                Obx(() {
+                  if (controller.showGuideFrame.isTrue &&
+                      controller.previewFile() == null &&
+                      widget.argument.carPartDirectionEnum.id != 31 &&
+                      widget.argument.carPartDirectionEnum.id != 22) {
+                    return Positioned.fill(
+                      bottom: 100,
+                      top: 32,
+                      child: GuideFrame(
+                        carPartDirectionEnum:
+                            widget.argument.carPartDirectionEnum,
+                        carModelEnum: CarModelEnum.kiaMorning,
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+
+                /// Preview
+                Obx(
+                  () {
+                    if (controller.previewFile.value != null) {
                       return Stack(
                         children: [
-                          RotatedBox(
-                            quarterTurns: Platform.isIOS ? 1 : 0,
-                            child: BuyMePreviewImage(
-                              file: File(controller.previewFile()!.path),
-                              retake: controller.showRetake()
-                                  ? controller.retakePhoto
-                                  : null,
-                              save: () {},
+                          Transform.scale(
+                            scale: scale,
+                            child: RotatedBox(
+                              quarterTurns:
+                                  controller.isFromGallery.isTrue ? 1 : 0,
+                              child: BuyMePreviewImage(
+                                file: File(controller.previewFile()!.path),
+                                retake: controller.showRetake()
+                                    ? controller.retakePhoto
+                                    : null,
+                                save: () {},
+                              ),
                             ),
                           ),
                           if (controller.isResizing())
@@ -181,14 +189,73 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                       );
                     }
                     return const SizedBox.shrink();
-                  }),
+                  },
+                ),
 
-                  /// bottom bar buttons
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Obx(
-                      () => controller.previewFile() == null
-                          ? BuyMeCameraBottomBar(
+                /// warning
+                Obx(
+                  () {
+                    if (controller.status().state == AppState.warning &&
+                        controller.status().message != null) {
+                      String message = controller.status().message ?? '';
+                      if (controller.isConfidentLevelWarning.isTrue) {
+                        message = message.split('.').join('\n');
+                      }
+                      return Center(
+                        child: RotatedBox(
+                          quarterTurns: 1,
+                          child: WarningDialog(
+                            description: message,
+                            leftButtonText:
+                                controller.cacheDamageResponse != null
+                                    ? controller.isConfidentLevelWarning.isTrue
+                                        ? AppString.next
+                                        : AppString.save
+                                    : AppString.next,
+                            leftPressed: () =>
+                                controller.cacheDamageResponse != null
+                                    ? controller.engineWarningHandle('save')
+                                    : controller.engineWarningHandle('next'),
+                            rightPressed: () =>
+                                controller.engineWarningHandle('retake'),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+
+                /// error
+                Obx(
+                  () {
+                    if (controller.status().state == AppState.customError &&
+                        controller.showErrorDialog.isTrue &&
+                        controller.status().message != null) {
+                      final message = controller.status().message;
+                      return Center(
+                        child: RotatedBox(
+                          quarterTurns: 1,
+                          child: ErrorDialog(
+                            retake: () =>
+                                controller.engineWarningHandle('retake'),
+                            description: AppString.invalidImage,
+                            subDescription: 'Lý do: $message',
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+
+                /// bottom bar buttons
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Obx(
+                    () => controller.previewFile() == null
+                        ? SafeArea(
+                            child: BuyMeCameraBottomBar(
                               previewFile: controller.previewFile(),
                               showToggleFrame: widget
                                           .argument.carPartDirectionEnum.id !=
@@ -197,12 +264,12 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                               onToggleFrameCallBack: controller.showGuideFrame,
                               takePhoto: controller.takePhoto,
                               pickImage: controller.pickedPhoto,
-                            )
-                          : const SizedBox.shrink(),
-                    ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
