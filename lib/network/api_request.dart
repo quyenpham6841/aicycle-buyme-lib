@@ -30,7 +30,7 @@ class APIRequest {
     this.isMultiLanguage = true,
   }) {
     final baseHeaders = {
-      'Authorization': "Bearer ede512f2-1490-4219-a160-3813192d053a",
+      'Authorization': "Bearer af2fd93f-f5dd-4f0a-a4b4-2b60ff1e129c",
       if (isMultiLanguage) "lang": Get.locale?.languageCode ?? "vi",
     };
     this.headers = baseHeaders;

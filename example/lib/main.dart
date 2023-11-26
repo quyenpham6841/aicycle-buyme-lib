@@ -47,60 +47,61 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: tokenController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your token',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: externalClaimIdController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter your externalClaimId',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (tokenController.text.isEmpty ||
-                        externalClaimIdController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              "Please enter your token and externalClaimId"),
-                        ),
-                      );
-                      return;
-                    }
-                    await AICycle.createFolder(
-                      token: tokenController.text,
-                      externalClaimId: externalClaimIdController.text,
-                    );
-                  },
-                  child: const Text(
-                    "GO",
-                    style: TextStyle(fontSize: 14, color: Colors.blueAccent),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: FolderDetailPage(),
+      // body: SafeArea(
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(16.0),
+      //     child: Center(
+      //       child: Column(
+      //         mainAxisSize: MainAxisSize.min,
+      //         children: [
+      //           TextField(
+      //             controller: tokenController,
+      //             decoration: InputDecoration(
+      //               hintText: 'Enter your token',
+      //               border: OutlineInputBorder(
+      //                 borderRadius: BorderRadius.circular(10),
+      //               ),
+      //             ),
+      //           ),
+      //           const SizedBox(height: 16),
+      //           TextField(
+      //             controller: externalClaimIdController,
+      //             decoration: InputDecoration(
+      //               hintText: 'Enter your externalClaimId',
+      //               border: OutlineInputBorder(
+      //                 borderRadius: BorderRadius.circular(10),
+      //               ),
+      //             ),
+      //           ),
+      //           const SizedBox(height: 24),
+      //           ElevatedButton(
+      //             onPressed: () async {
+      //               if (tokenController.text.isEmpty ||
+      //                   externalClaimIdController.text.isEmpty) {
+      //                 ScaffoldMessenger.of(context).showSnackBar(
+      //                   const SnackBar(
+      //                     content: Text(
+      //                         "Please enter your token and externalClaimId"),
+      //                   ),
+      //                 );
+      //                 return;
+      //               }
+      //               await AICycle.createFolder(
+      //                 token: tokenController.text,
+      //                 externalClaimId: externalClaimIdController.text,
+      //               );
+      //             },
+      //             child: const Text(
+      //               "GO",
+      //               style: TextStyle(fontSize: 14, color: Colors.blueAccent),
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

@@ -13,7 +13,7 @@ import 'package:camera/camera.dart';
 import '../../../../enum/app_state.dart';
 import '../../../common/contants/direction_constant.dart';
 import '../../../common/utils.dart';
-import '../../../folder_details/controller/folder_detail_controller.dart';
+import '../../../folder_details/presentation/widgets/controller/folder_detail_controller.dart';
 import '../../data/models/damage_assessment_response.dart';
 import '../../domain/usecase/call_engine_usecase.dart';
 import '../../domain/usecase/upload_image_usecase.dart';

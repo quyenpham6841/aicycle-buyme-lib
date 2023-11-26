@@ -12,7 +12,7 @@ import '../../common/base_widget.dart';
 import '../../common/c_button.dart';
 import '../../common/c_loading_view.dart';
 import '../../common/themes/c_colors.dart';
-import '../controller/folder_detail_controller.dart';
+import 'widgets/controller/folder_detail_controller.dart';
 import 'widgets/car_position.dart';
 import 'widgets/is_one_car_widget.dart';
 
@@ -89,12 +89,12 @@ class _FolderDetailPageState
                                 children: [
                                   CarPosition(
                                     direction: CarPartDirectionEnum.d45LeftBack,
-                                    images: controller.images.value,
+                                    images: controller.imageInfo.value?.images,
                                   ),
                                   CarPosition(
                                     direction:
                                         CarPartDirectionEnum.d45RightBack,
-                                    images: controller.images.value,
+                                    images: controller.imageInfo.value?.images,
                                   ),
                                 ],
                               ),
@@ -106,7 +106,7 @@ class _FolderDetailPageState
                             left: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.leftProd,
                               ),
                             ),
@@ -118,7 +118,7 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45LeftFront,
                               ),
                             ),
@@ -130,7 +130,7 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45RightFront,
                               ),
                             ),

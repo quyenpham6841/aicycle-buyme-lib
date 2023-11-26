@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 
 import 'features/claim_folder/domain/usecase/create_claim_folder_usecase.dart';
-import 'features/folder_details/controller/folder_detail_controller.dart';
+import 'features/folder_details/presentation/widgets/controller/folder_detail_controller.dart';
 import 'injection_container.dart';
 
 class AICycle {

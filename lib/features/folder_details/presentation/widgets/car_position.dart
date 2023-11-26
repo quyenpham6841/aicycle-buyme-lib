@@ -9,9 +9,9 @@ import 'package:gap/gap.dart';
 import '../../../../aicycle_buyme_lib.dart';
 import '../../../common/cache_image_widget.dart';
 import '../../../common/themes/c_colors.dart';
-import '../../../../types/buy_me_image_model.dart';
 import '../../../../enum/car_part_direction.dart';
 import '../../../../generated/assets.gen.dart';
+import '../../data/models/buy_me_image_model.dart';
 
 class CarPosition extends StatelessWidget {
   final CarPartDirectionEnum direction;
@@ -41,7 +41,7 @@ class CarPosition extends StatelessWidget {
             argument: BuyMeCameraArgument(
               carPartDirectionEnum: direction,
               carModelEnum: CarModelEnum.kiaMorning,
-              claimId: 13977,
+              claimId: 25887,
             ),
           ),
         ),
