@@ -1,9 +1,9 @@
-import 'package:aicycle_buyme_lib/features/claim_folder/data/models/claim_folder_model.dart';
-import 'package:aicycle_buyme_lib/features/claim_folder/data/remote_data/folder_api.dart';
-import 'package:aicycle_buyme_lib/features/claim_folder/domain/repository/claim_folder_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../network/api_error.dart';
+import '../../domain/repository/claim_folder_repository.dart';
+import '../models/claim_folder_model.dart';
+import '../remote_data/folder_api.dart';
 
 class ClaimFolderRepositoryImpl implements ClaimFolderRepository {
   @override

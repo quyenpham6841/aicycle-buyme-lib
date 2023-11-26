@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:aicycle_buyme_lib/features/common/logger.dart';
 import 'package:camera/camera.dart';
 
 import '../../aicycle_buyme_lib.dart';
@@ -12,6 +11,7 @@ import 'package:image/image.dart' as img;
 
 import '../../generated/assets.gen.dart';
 import '../../network/api_error.dart';
+import 'logger.dart';
 import 'themes/c_colors.dart';
 import 'themes/c_textstyle.dart';
 

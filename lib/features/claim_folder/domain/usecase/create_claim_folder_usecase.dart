@@ -1,8 +1,8 @@
-import 'package:aicycle_buyme_lib/features/claim_folder/domain/repository/claim_folder_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../network/api_error.dart';
 import '../../data/models/claim_folder_model.dart';
+import '../repository/claim_folder_repository.dart';
 
 class CreateClaimFolderUseCase {
   final ClaimFolderRepository repository;

@@ -1,6 +1,6 @@
-import 'package:aicycle_buyme_lib/network/api_error.dart';
 import 'package:dartz/dartz.dart';
 
+import '../../../../network/api_error.dart';
 import '../../data/models/damage_assessment_response.dart';
 import '../../data/models/image_upload_response.dart';
 

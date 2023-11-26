@@ -1,6 +1,7 @@
 import 'features/claim_folder/data/repository/claim_folder_repository_impl.dart';
 import 'features/claim_folder/domain/usecase/create_claim_folder_usecase.dart';
 import 'features/folder_details/data/repository/folder_detail_repository_impl.dart';
+import 'features/folder_details/domain/usecase/detele_image_by_id_usecase.dart';
 import 'features/folder_details/domain/usecase/get_image_info_usecase.dart';
 import 'package:get/get.dart';
 
@@ -39,6 +40,10 @@ class InjectionContainer {
     );
     Get.lazyPut(
       () => GetImageInfoUsecase(Get.find<FolderDetailRepositoryImpl>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => DeleteImageByIdUsecase(Get.find<FolderDetailRepositoryImpl>()),
       fenix: true,
     );
   }

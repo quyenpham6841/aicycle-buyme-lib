@@ -1,5 +1,4 @@
-import 'package:aicycle_buyme_lib/enum/app_state.dart';
-
+import '../../../../../enum/app_state.dart';
 import '../../../../common/base_controller.dart';
 import '../../../../../types/check_car_model.dart';
 import 'package:camera/camera.dart';

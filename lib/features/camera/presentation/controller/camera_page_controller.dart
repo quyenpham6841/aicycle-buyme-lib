@@ -1,18 +1,17 @@
-// import 'dart:io';
-
-// import 'package:flutter/services.dart';
+import 'package:aicycle_buyme_lib/enum/car_part_direction.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../../../common/base_controller.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
 import '../../../../enum/app_state.dart';
 import '../../../common/contants/direction_constant.dart';
 import '../../../common/utils.dart';
+import '../../../folder_details/data/models/buy_me_image_model.dart';
+import '../../../folder_details/domain/usecase/detele_image_by_id_usecase.dart';
 import '../../../folder_details/presentation/widgets/controller/folder_detail_controller.dart';
 import '../../data/models/damage_assessment_response.dart';
 import '../../domain/usecase/call_engine_usecase.dart';
@@ -23,6 +22,7 @@ class CameraPageController extends BaseController {
   final CallEngineUsecase callEngineUsecase = Get.find<CallEngineUsecase>();
   final UploadImageUsecase uploadImageToS3Server =
       Get.find<UploadImageUsecase>();
+  final DeleteImageByIdUsecase deleteImageByIdUsecase = Get.find();
   CameraController? cameraController;
   var isInActive = false.obs;
   var showGuideFrame = true.obs;
@@ -235,22 +235,8 @@ class CameraPageController extends BaseController {
         }
         break;
       case 'save':
-        // getIt<EventBus>().fire(CallEngineEvent());
         if (cacheDamageResponse != null) {
-          if (Get.isRegistered<FolderDetailController>()) {
-            final folderDetailController = Get.find<FolderDetailController>();
-          }
-          // getIt<EventBus>().fire(
-          //   BuyMeCallEngineEvent(
-          //     imageModel: ImageModel(
-          //       imageId: cacheDamageResponse?.imageId?.toString(),
-          //       directionId: state.argument?.carPartDirectionEnum.id.toString(),
-          //       directionName: state.argument?.carPartDirectionEnum.title,
-          //       imageUrl: cacheDamageResponse?.result?.imgUrl,
-          //       resizeImageUrl: cacheDamageResponse?.result?.imgUrl,
-          //     ),
-          //   ),
-          // );
+          updateDirection(cacheDamageResponse);
         }
         status(BaseStatus(message: null, state: AppState.pop));
         damageAssessmentResponse.value = cacheDamageResponse;
@@ -262,13 +248,8 @@ class CameraPageController extends BaseController {
         damageAssessmentResponse.value = null;
         showErrorDialog(false);
         if (cacheDamageResponse != null) {
-          // cacheDamageResponse = null;
-          // await _homeUseCase
-          //     .deleteImageById(
-          //       imageId:
-          //           int.tryParse(cacheDamageResponse!.imageId.toString()) ?? 0,
-          //     )
-          //     .then((value) => cacheDamageResponse = null);
+          await deleteImageByIdUsecase(cacheDamageResponse!.imageId.toString())
+              .then((value) => cacheDamageResponse = null);
         }
         break;
     }
@@ -316,20 +297,7 @@ class CameraPageController extends BaseController {
     }, (r) {
       isLoading(false);
       if (r.errorCodeFromEngine == null || r.errorCodeFromEngine == 0) {
-        // getIt<EventBus>().fire(CallEngineEvent());
-        // getIt<EventBus>().fire(
-        //   BuyMeCallEngineEvent(
-        //     imageModel: ImageModel(
-        //       imageId: r.imageId?.toString(),
-        //       directionId: state.argument?.carPartDirectionEnum.id.toString(),
-        //       directionName: state.argument?.carPartDirectionEnum.title,
-        //       imageUrl: r.result?.imgUrl,
-        //       resizeImageUrl: r.result?.imgUrl,
-        //       imageSize: r.result?.imgSize?.map((e) => e ?? 0).toList(),
-        //       directionSlug: r.result?.extraInfor?.imageDirection,
-        //     ),
-        //   ),
-        // );
+        updateDirection(r);
         status(
           BaseStatus(
             message: null,
@@ -361,5 +329,30 @@ class CameraPageController extends BaseController {
         }
       }
     });
+  }
+
+  void updateDirection(DamageAssessmentResponse? value) {
+    if (Get.isRegistered<FolderDetailController>()) {
+      final folderDetailController = Get.find<FolderDetailController>();
+      var images = folderDetailController.imageInfo.value?.images ?? [];
+      images.removeWhere(
+        (element) =>
+            element.directionSlug == argument?.carPartDirectionEnum.excelId ||
+            element.directionId == argument?.carPartDirectionEnum.id.toString(),
+      );
+      images.add(BuyMeImage(
+        imageId: value?.imageId?.toString(),
+        directionId: argument?.carPartDirectionEnum.id.toString(),
+        directionName: argument?.carPartDirectionEnum.buyMeTitle,
+        directionSlug: value?.result?.extraInfor?.imageDirection ??
+            argument?.carPartDirectionEnum.excelId,
+        imageUrl: value?.result?.imgUrl,
+        resizeImageUrl: value?.result?.imgUrl,
+        imageSize: value?.result?.imgSize,
+      ));
+
+      folderDetailController.imageInfo.value =
+          BuyMeImageResponse(images: images);
+    }
   }
 }

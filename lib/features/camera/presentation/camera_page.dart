@@ -1,13 +1,9 @@
 import 'dart:io';
 
-import 'package:aicycle_buyme_lib/enum/app_state.dart';
-import 'package:aicycle_buyme_lib/features/camera/presentation/widgets/error_dialog.dart';
-import 'package:aicycle_buyme_lib/features/camera/presentation/widgets/warning_dialog.dart';
-import 'package:aicycle_buyme_lib/features/common/app_string.dart';
-import 'package:aicycle_buyme_lib/features/common/themes/c_textstyle.dart';
-
+import '../../../enum/app_state.dart';
 import '../../../enum/car_model.dart';
 import '../../../enum/car_part_direction.dart';
+import '../../common/app_string.dart';
 import '../../common/base_widget.dart';
 import '../../common/c_loading_view.dart';
 import 'package:camera/camera.dart';
@@ -16,10 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../common/themes/c_colors.dart';
+import '../../common/themes/c_textstyle.dart';
 import 'controller/camera_page_controller.dart';
 import 'widgets/buy_me_camera_bottom_bar.dart';
 import 'widgets/buy_me_preview_image.dart';
+import 'widgets/error_dialog.dart';
 import 'widgets/guide_frame.dart';
+import 'widgets/warning_dialog.dart';
 
 class BuyMeCameraArgument {
   final CarPartDirectionEnum carPartDirectionEnum;

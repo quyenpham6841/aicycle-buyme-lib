@@ -4,7 +4,6 @@ import '../../../../network/api_error.dart';
 import '../../data/models/buy_me_image_model.dart';
 
 abstract class FolderDetailRepository {
-  Future<Either<APIErrors, BuyMeImageResponse>> getImageInfo(
-    String claimId,
-  );
+  Future<Either<APIErrors, BuyMeImageResponse>> getImageInfo(String claimId);
+  Future<Either<APIErrors, bool>> deleteImageById(String imageId);
 }

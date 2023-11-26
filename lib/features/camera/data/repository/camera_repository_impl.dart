@@ -1,8 +1,5 @@
 import 'dart:io';
 
-import 'package:aicycle_buyme_lib/features/camera/data/models/get_upload_url_response.dart';
-import 'package:aicycle_buyme_lib/features/camera/data/models/image_upload_response.dart';
-import 'package:aicycle_buyme_lib/features/camera/data/remote_data/camera_api.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
 
@@ -10,6 +7,10 @@ import '../models/damage_assessment_response.dart';
 import '../../domain/repository/camera_repository.dart';
 import '../../../../network/api_error.dart';
 import 'package:dartz/dartz.dart';
+
+import '../models/get_upload_url_response.dart';
+import '../models/image_upload_response.dart';
+import '../remote_data/camera_api.dart';
 
 class CameraRepositoryImpl implements CameraRepository {
   @override
