@@ -9,7 +9,7 @@ class CallEngineUsecase {
   CallEngineUsecase(this.repository);
 
   Future<Either<APIErrors, DamageAssessmentResponse>> call({
-    required int claimId,
+    required String claimId,
     required String imageName,
     required String filePath,
     required String position,

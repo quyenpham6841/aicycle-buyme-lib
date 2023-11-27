@@ -16,7 +16,7 @@ class CameraRepositoryImpl implements CameraRepository {
   @override
   Future<Either<APIErrors, DamageAssessmentResponse>>
       callAiEngineAfterTakePhotoV2(
-          {required int claimId,
+          {required String claimId,
           required String imageName,
           required String filePath,
           required String position,

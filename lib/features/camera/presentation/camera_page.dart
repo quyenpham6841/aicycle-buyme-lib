@@ -23,7 +23,7 @@ import 'widgets/warning_dialog.dart';
 class BuyMeCameraArgument {
   final CarPartDirectionEnum carPartDirectionEnum;
   final CarModelEnum carModelEnum;
-  final int claimId;
+  final String claimId;
 
   BuyMeCameraArgument({
     required this.carPartDirectionEnum,

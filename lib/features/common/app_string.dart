@@ -7,4 +7,5 @@ class AppString {
   static const readMore = 'Xem thêm';
   static const showLess = 'Ẩn bớt';
   static const invalidImage = 'Ảnh không hợp lệ';
+  static const pleaseWait = 'Vui lòng chờ khởi tạo hồ sơ...';
 }

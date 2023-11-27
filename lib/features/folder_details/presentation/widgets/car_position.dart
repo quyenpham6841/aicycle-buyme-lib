@@ -14,11 +14,13 @@ import '../../../../generated/assets.gen.dart';
 import '../../data/models/buy_me_image_model.dart';
 
 class CarPosition extends StatelessWidget {
+  final String claimFolderId;
   final CarPartDirectionEnum direction;
   final List<BuyMeImage>? images;
   const CarPosition({
     super.key,
     required this.direction,
+    required this.claimFolderId,
     this.images,
   });
 
@@ -41,7 +43,7 @@ class CarPosition extends StatelessWidget {
             argument: BuyMeCameraArgument(
               carPartDirectionEnum: direction,
               carModelEnum: CarModelEnum.kiaMorning,
-              claimId: 25887,
+              claimId: claimFolderId,
             ),
           ),
         ),

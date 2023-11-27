@@ -4,7 +4,7 @@ import '../../../../network/endpoints.dart';
 class CameraAPI extends APIRequest {
   ///
   CameraAPI.callEngineV2({
-    required int claimId,
+    required String claimId,
     required String imageName,
     required String filePath,
     required String position,

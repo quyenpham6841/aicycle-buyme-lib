@@ -125,6 +125,13 @@ class $AssetsImagesGen {
   AssetGenImage get icFrameOn =>
       const AssetGenImage('assets/images/ic_frame_on.png');
 
+  /// File path: assets/images/img_buyme.png
+  AssetGenImage get imgBuyme =>
+      const AssetGenImage('assets/images/img_buyme.png');
+
+  /// File path: assets/images/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
+
   /// File path: assets/images/sedan_back.png
   AssetGenImage get sedanBack =>
       const AssetGenImage('assets/images/sedan_back.png');
@@ -220,6 +227,8 @@ class $AssetsImagesGen {
         hatchbackRightFront,
         icFrameOff,
         icFrameOn,
+        imgBuyme,
+        logo,
         sedanBack,
         sedanD45LeftBack,
         sedanD45LeftFront,

@@ -1,5 +1,6 @@
-import 'features/claim_folder/data/repository/claim_folder_repository_impl.dart';
-import 'features/claim_folder/domain/usecase/create_claim_folder_usecase.dart';
+import 'features/aicycle_buy_me/data/repository/aicycle_buy_me_repository_impl.dart';
+import 'features/aicycle_buy_me/domain/usecase/create_folder_usecase.dart';
+import 'features/aicycle_buy_me/domain/usecase/get_duplicate_folder_usecase.dart';
 import 'features/folder_details/data/repository/folder_detail_repository_impl.dart';
 import 'features/folder_details/domain/usecase/detele_image_by_id_usecase.dart';
 import 'features/folder_details/domain/usecase/get_image_info_usecase.dart';
@@ -13,24 +14,9 @@ class InjectionContainer {
   InjectionContainer._();
 
   static initial() {
-    _auth();
     _camera();
     _folderDetail();
-  }
-
-  static void _auth() {
-    Get.lazyPut(
-      () => ClaimFolderRepositoryImpl(),
-      fenix: true,
-    );
-    Get.lazyPut(
-      () => CreateClaimFolderUseCase(Get.find<ClaimFolderRepositoryImpl>()),
-      fenix: true,
-    );
-    Get.lazyPut(
-      () => GetClaimFolderUseCase(Get.find<ClaimFolderRepositoryImpl>()),
-      fenix: true,
-    );
+    _folder();
   }
 
   static void _folderDetail() {
@@ -59,6 +45,21 @@ class InjectionContainer {
     );
     Get.lazyPut(
       () => UploadImageUsecase(Get.find<CameraRepositoryImpl>()),
+      fenix: true,
+    );
+  }
+
+  static void _folder() {
+    Get.lazyPut(
+      () => AicycleBuyMeRepositoryImpl(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CreateFolderUsecase(Get.find<AicycleBuyMeRepositoryImpl>()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => GetDuplicateFolderUsecase(Get.find<AicycleBuyMeRepositoryImpl>()),
       fenix: true,
     );
   }

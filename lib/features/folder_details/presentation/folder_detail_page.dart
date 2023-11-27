@@ -17,7 +17,13 @@ import 'widgets/car_position.dart';
 import 'widgets/is_one_car_widget.dart';
 
 class FolderDetailPage extends StatefulWidget {
-  const FolderDetailPage({super.key});
+  const FolderDetailPage({
+    super.key,
+    required this.claimFolderId,
+    required this.externalClaimId,
+  });
+  final String claimFolderId;
+  final String externalClaimId;
 
   @override
   State<FolderDetailPage> createState() => _FolderDetailPageState();
@@ -32,6 +38,11 @@ class _FolderDetailPageState
     } else {
       return Get.put(FolderDetailController());
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -88,10 +99,12 @@ class _FolderDetailPageState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CarPosition(
+                                    claimFolderId: widget.claimFolderId,
                                     direction: CarPartDirectionEnum.d45LeftBack,
                                     images: controller.imageInfo.value?.images,
                                   ),
                                   CarPosition(
+                                    claimFolderId: widget.claimFolderId,
                                     direction:
                                         CarPartDirectionEnum.d45RightBack,
                                     images: controller.imageInfo.value?.images,
@@ -106,6 +119,7 @@ class _FolderDetailPageState
                             left: 0,
                             child: Obx(
                               () => CarPosition(
+                                claimFolderId: widget.claimFolderId,
                                 images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.leftProd,
                               ),
@@ -118,6 +132,7 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
+                                claimFolderId: widget.claimFolderId,
                                 images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45LeftFront,
                               ),
@@ -130,6 +145,7 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
+                                claimFolderId: widget.claimFolderId,
                                 images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45RightFront,
                               ),
