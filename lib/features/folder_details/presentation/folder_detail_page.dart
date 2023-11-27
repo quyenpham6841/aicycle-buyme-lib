@@ -12,6 +12,7 @@ import '../../common/base_widget.dart';
 import '../../common/c_button.dart';
 import '../../common/c_loading_view.dart';
 import '../../common/themes/c_colors.dart';
+import '../data/models/buy_me_image_model.dart';
 import 'widgets/controller/folder_detail_controller.dart';
 import 'widgets/car_position.dart';
 import 'widgets/is_one_car_widget.dart';
@@ -21,9 +22,11 @@ class FolderDetailPage extends StatefulWidget {
     super.key,
     required this.claimFolderId,
     required this.externalClaimId,
+    this.onViewResultCallBack,
   });
   final String claimFolderId;
   final String externalClaimId;
+  final Function(List<BuyMeImage>? images)? onViewResultCallBack;
 
   @override
   State<FolderDetailPage> createState() => _FolderDetailPageState();
@@ -38,11 +41,6 @@ class _FolderDetailPageState
     } else {
       return Get.put(FolderDetailController());
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -168,9 +166,13 @@ class _FolderDetailPageState
                 bottom: 32,
               ),
               decoration: const BoxDecoration(color: Colors.white),
-              child: CButton(
-                onPressed: () {},
-                title: AppString.viewResult,
+              child: Obx(
+                () => CButton(
+                  isDisable: controller.imageInfo.value != null,
+                  onPressed: () => widget.onViewResultCallBack
+                      ?.call(controller.imageInfo.value?.images),
+                  title: AppString.viewResult,
+                ),
               ),
             ),
           ],

@@ -9,6 +9,7 @@ import '../../common/app_string.dart';
 import '../../common/base_widget.dart';
 import '../../common/themes/c_colors.dart';
 import '../../common/themes/c_textstyle.dart';
+import '../../folder_details/data/models/buy_me_image_model.dart';
 import '../../folder_details/presentation/folder_detail_page.dart';
 import 'aicycle_buy_me_controller.dart';
 
@@ -25,8 +26,13 @@ class AiCycleBuyMeArgument {
 }
 
 class AiCycleBuyMe extends StatefulWidget {
-  const AiCycleBuyMe({super.key, required this.argument});
+  const AiCycleBuyMe({
+    super.key,
+    required this.argument,
+    required this.onViewResultCallBack,
+  });
   final AiCycleBuyMeArgument argument;
+  final Function(List<BuyMeImage>? imagesResult) onViewResultCallBack;
 
   @override
   State<AiCycleBuyMe> createState() => _AiCycleBuyMeState();
@@ -54,6 +60,7 @@ class _AiCycleBuyMeState
             builder: (BuildContext context) => FolderDetailPage(
               claimFolderId: controller.claimFolder.value?.claimId ?? '',
               externalClaimId: widget.argument.externalClaimId,
+              onViewResultCallBack: widget.onViewResultCallBack,
             ),
           ),
         );

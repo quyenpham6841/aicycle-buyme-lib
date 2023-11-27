@@ -118,10 +118,12 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
             /// camera view
             return Stack(
               children: [
-                Transform.scale(
-                  scale: scale,
-                  child: CameraPreview(
-                    controller.cameraController!,
+                Center(
+                  child: Transform.scale(
+                    scale: scale,
+                    child: CameraPreview(
+                      controller.cameraController!,
+                    ),
                   ),
                 ),
                 Obx(() {

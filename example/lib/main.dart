@@ -37,6 +37,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // body: FolderDetailPage(),
       body: SafeArea(
         child: AiCycleBuyMe(
+          onViewResultCallBack: (imagesResult) {
+            print(imagesResult);
+          },
           argument: AiCycleBuyMeArgument(
             externalClaimId: '100',
             apiToken: '67c12ea1-80d6-4907-b77c-4df701ff77e0',
