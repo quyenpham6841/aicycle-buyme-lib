@@ -13,16 +13,20 @@ class FolderDetailController extends BaseController {
   final GetImageInfoUsecase getImageInfoUsecase = Get.find();
   var checkCarModel = Rx<CheckCarModel?>(null);
   var imageInfo = Rx<BuyMeImageResponse?>(null);
+  String? claimId;
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     getImageInfo();
   }
 
   void getImageInfo() async {
+    if (claimId == null) {
+      return;
+    }
     isLoading(true);
-    var res = await getImageInfoUsecase('25887');
+    var res = await getImageInfoUsecase(claimId!);
     res.fold(
       (l) {
         isLoading(false);

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
@@ -21,29 +23,33 @@ class Utils {
   Utils._();
   static final Utils instance = Utils._();
 
-  static Future<XFile> compressImage(XFile source, int quality) async {
+  static Future<XFile> compressImage(XFile source, int quality,
+      {Function(Size)? imageSizeCallBack, bool fromGallery = false}) async {
     File sourceFile = File(source.path);
     try {
-      img.Image? input = await img.decodeImageFile(source.path);
+      img.Image? input = await img.decodeJpgFile(source.path);
       // rotate image if android because camera image is landscape
       if (input == null) {
         return source;
       }
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid && !fromGallery) {
         input = img.copyRotate(input, angle: 90);
       }
       int imageWidth = input.width;
       int imageHeight = input.height;
       input = img.copyResize(
         input,
-        width: input.height > input.width ? 1600 : 1080,
-        height: input.height > input.width ? 1080 : 1600,
+        width: imageWidth > imageHeight ? 1600 : 1200,
+        height: imageWidth > imageHeight ? 1200 : 1600,
         maintainAspect: true,
       );
+      final dirPath = (await getTemporaryDirectory()).path;
+      final imagePath = '$dirPath/${basename(source.path)}';
       var compressedXFile = XFile.fromData(
         img.encodeJpg(input, quality: quality),
-        path: source.path,
+        path: imagePath,
       );
+      await compressedXFile.saveTo(imagePath);
       var fileLength = await compressedXFile.length();
       // Nếu vẫn lớn hơn 2MB thì giảm chất lượng ảnh
       if (fileLength > 2000000) {
@@ -56,6 +62,8 @@ class Utils {
       logger.i(
         'Resize successfully:${imageWidth}x$imageHeight => ${input.width}x${input.height}',
       );
+      imageSizeCallBack
+          ?.call(Size(input.width.toDouble(), input.height.toDouble()));
       return compressedXFile;
     } catch (e) {
       return source;

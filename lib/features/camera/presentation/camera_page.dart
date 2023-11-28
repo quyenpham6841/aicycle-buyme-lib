@@ -15,7 +15,7 @@ import '../../common/themes/c_colors.dart';
 import '../../common/themes/c_textstyle.dart';
 import 'controller/camera_page_controller.dart';
 import 'widgets/buy_me_camera_bottom_bar.dart';
-import 'widgets/buy_me_preview_image.dart';
+// import 'widgets/buy_me_preview_image.dart';
 import 'widgets/error_dialog.dart';
 import 'widgets/guide_frame.dart';
 import 'widgets/warning_dialog.dart';
@@ -97,6 +97,8 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
         ],
       ),
       body: LoadingView<CameraPageController>(
+        isCustomLoading: true,
+        quarterTurns: 1,
         child: GetBuilder<CameraPageController>(
           id: 'camera',
           builder: (ctrl) {
@@ -121,8 +123,11 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                 Center(
                   child: Transform.scale(
                     scale: scale,
-                    child: CameraPreview(
-                      controller.cameraController!,
+                    child: RotatedBox(
+                      quarterTurns: Platform.isIOS ? 1 : 0,
+                      child: CameraPreview(
+                        controller.cameraController!,
+                      ),
                     ),
                   ),
                 ),
@@ -148,22 +153,34 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                 Obx(
                   () {
                     if (controller.previewFile.value != null) {
+                      // double imageScale = scale;
+                      // if (controller.localImageSize.value != null) {
+                      //   if (controller.localImageSize.value!.aspectRatio < 1) {
+                      //     imageScale = 1;
+                      //   } else {
+                      //     imageScale = 1 /
+                      //         (controller.localImageSize.value!.aspectRatio *
+                      //             frameAspectRatio);
+                      //   }
+                      // }
                       return Stack(
                         children: [
-                          Transform.scale(
-                            scale: scale,
-                            child: RotatedBox(
-                              quarterTurns:
-                                  controller.isFromGallery.isTrue ? 1 : 0,
-                              child: BuyMePreviewImage(
-                                file: File(controller.previewFile()!.path),
-                                retake: controller.showRetake()
-                                    ? controller.retakePhoto
-                                    : null,
-                                save: () {},
-                              ),
-                            ),
-                          ),
+                          // Center(
+                          //   child: RotatedBox(
+                          //     quarterTurns: (Platform.isAndroid &&
+                          //             controller.isFromGallery.isFalse)
+                          //         ? 0
+                          //         : 1,
+                          //     // controller.isFromGallery.isTrue ? 1 : 0,
+                          //     child: BuyMePreviewImage(
+                          //       file: File(controller.previewFile()!.path),
+                          //       retake: controller.showRetake()
+                          //           ? controller.retakePhoto
+                          //           : null,
+                          //       save: () {},
+                          //     ),
+                          //   ),
+                          // ),
                           if (controller.isResizing())
                             RotatedBox(
                               quarterTurns: 1,
@@ -240,7 +257,7 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                           child: ErrorDialog(
                             retake: () =>
                                 controller.engineWarningHandle('retake'),
-                            description: AppString.invalidImage,
+                            description: AppString.error,
                             subDescription: 'Lý do: $message',
                           ),
                         ),

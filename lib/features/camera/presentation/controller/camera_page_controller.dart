@@ -1,4 +1,7 @@
-import 'package:aicycle_buyme_lib/enum/car_part_direction.dart';
+// import 'package:aicycle_buyme_lib/enum/car_part_direction.dart';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -10,7 +13,7 @@ import 'package:camera/camera.dart';
 import '../../../../enum/app_state.dart';
 import '../../../common/contants/direction_constant.dart';
 import '../../../common/utils.dart';
-import '../../../folder_details/data/models/buy_me_image_model.dart';
+// import '../../../folder_details/data/models/buy_me_image_model.dart';
 import '../../../folder_details/domain/usecase/detele_image_by_id_usecase.dart';
 import '../../../folder_details/presentation/widgets/controller/folder_detail_controller.dart';
 import '../../data/models/damage_assessment_response.dart';
@@ -37,6 +40,7 @@ class CameraPageController extends BaseController {
   DamageAssessmentResponse? cacheDamageResponse;
   Map<String, dynamic> cacheValidationModel = {};
   var isFromGallery = false.obs;
+  var localImageSize = Rx<Size?>(null);
 
   @override
   void onInit() {
@@ -99,9 +103,9 @@ class CameraPageController extends BaseController {
     });
     try {
       await cameraCtrl.initialize();
-      // if (Platform.isIOS) {
-      //   cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
-      // }
+      if (Platform.isIOS) {
+        cameraCtrl.lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+      }
       isLoading(false);
     } on CameraException catch (_) {
       isLoading(false);
@@ -126,18 +130,29 @@ class CameraPageController extends BaseController {
   void takePhoto() async {
     if (previewFile.value == null) {
       previewFile.value = await cameraController?.takePicture();
+      await cameraController?.pausePreview();
       isFromGallery.value = false;
       if (previewFile.value != null) {
-        isResizing(true);
-        var resizeFile = await Utils.compressImage(previewFile.value!, 100);
-        previewFile.value = resizeFile;
-        isResizing(false);
-        callEngine();
+        isResizing.value = true;
+        final resizeFile = await Utils.compressImage(
+          previewFile.value!,
+          100,
+          imageSizeCallBack: (p0) {
+            localImageSize.value = p0;
+          },
+        );
+        // previewFile.value = resizeFile;
+        isResizing.value = false;
+        callEngine(resizeFile);
       }
+    } else {
+      await cameraController?.resumePreview();
     }
   }
 
   void retakePhoto() {
+    cameraController?.resumePreview();
+    localImageSize.value = null;
     previewFile.value = null;
     showRetake(false);
     showErrorDialog(false);
@@ -146,45 +161,54 @@ class CameraPageController extends BaseController {
 
   void pickedPhoto() async {
     if (previewFile.value == null) {
-      previewFile.value = await ImagePicker().pickImage(
+      var pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery,
         imageQuality: 100,
       );
       isFromGallery.value = true;
-      if (previewFile.value != null) {
-        isResizing(true);
-        var resizeFile = await Utils.compressImage(previewFile.value!, 100);
-        previewFile.value = resizeFile;
-        isResizing(false);
-        callEngine();
+      if (pickedFile != null) {
+        previewFile.value = pickedFile;
+        isResizing.value = true;
+        var resizeFile = await Utils.compressImage(
+          pickedFile,
+          100,
+          fromGallery: true,
+          imageSizeCallBack: (p0) {
+            localImageSize.value = p0;
+          },
+        );
+        // previewFile.value = resizeFile;
+        isResizing.value = false;
+        await callEngine(resizeFile);
       }
     }
   }
 
-  void callEngine() async {
-    if (previewFile.value != null && argument != null) {
+  Future<void> callEngine(XFile file) async {
+    if (argument != null) {
       /// Tính thời gian upload
-      isLoading(true);
+      isLoading.value = true;
       final Stopwatch timer = Stopwatch();
       timer.start();
-      var uploadRes =
-          await uploadImageToS3Server(localFilePath: previewFile.value!.path);
+      var uploadRes = await uploadImageToS3Server(localFilePath: file.path);
       timer.stop();
       // Kết thúc
       uploadRes.fold(
         (l) {
+          isLoading(false);
           status(
             BaseStatus(
               message: l.message.toString(),
-              state: AppState.failed,
+              state: AppState.customError,
             ),
           );
-          isLoading(false);
+          showErrorDialog(true);
+          showRetake(true);
         },
         (r) async {
           if (r.level == 'info' && r.filePath != null) {
             await callEngineImpl(
-              localFilePath: previewFile.value!.path,
+              localFilePath: file.path,
               serverFilePath: r.filePath!,
               timeAppUpload: timer.elapsedMilliseconds / 1000,
             );
@@ -192,7 +216,7 @@ class CameraPageController extends BaseController {
 
           /// warning
           else if (r.level == 'warning') {
-            cacheValidationModel['localFilePath'] = previewFile.value!.path;
+            cacheValidationModel['localFilePath'] = file.path;
             cacheValidationModel['serverFilePath'] = r.filePath;
             cacheValidationModel['timeAppUpload'] =
                 timer.elapsedMilliseconds / 1000;
@@ -229,7 +253,9 @@ class CameraPageController extends BaseController {
             timeAppUpload: cacheValidationModel['timeAppUpload'],
           );
         } else {
-          status(BaseStatus(message: 'Hệ thống lỗi', state: AppState.failed));
+          status(
+              BaseStatus(message: 'Hệ thống lỗi', state: AppState.customError));
+          showErrorDialog(true);
           damageAssessmentResponse.value = null;
           previewFile.value = null;
         }
@@ -242,15 +268,19 @@ class CameraPageController extends BaseController {
         damageAssessmentResponse.value = cacheDamageResponse;
         break;
       case 'retake':
+        cameraController?.resumePreview();
+        if (status.value.state == AppState.warning &&
+            cacheDamageResponse != null) {
+          await deleteImageByIdUsecase(cacheDamageResponse!.imageId.toString())
+              .then((value) => cacheDamageResponse = null);
+        }
+        localImageSize.value = null;
         previewFile.value = null;
         cacheValidationModel = {};
         status(BaseStatus(message: null, state: AppState.idle));
         damageAssessmentResponse.value = null;
         showErrorDialog(false);
-        if (cacheDamageResponse != null) {
-          await deleteImageByIdUsecase(cacheDamageResponse!.imageId.toString())
-              .then((value) => cacheDamageResponse = null);
-        }
+        cacheDamageResponse = null;
         break;
     }
   }
@@ -283,16 +313,24 @@ class CameraPageController extends BaseController {
             state: AppState.customError,
           ),
         );
-        showRetake(false);
         showErrorDialog(true);
-      } else {
-        status(
-          BaseStatus(
-            message: l.message.toString(),
-            state: AppState.failed,
-          ),
-        );
-        showRetake(true);
+        //   status(
+        //     BaseStatus(
+        //       message: l.message.toString(),
+        //       state: AppState.customError,
+        //     ),
+        //   );
+        //   showRetake(false);
+        //   showErrorDialog(true);
+        // } else {
+        //   status(
+        //     BaseStatus(
+        //       message: l.message.toString(),
+        //       state: AppState.customError,
+        //     ),
+        //   );
+        //   showErrorDialog(true);
+        //   showRetake(true);
       }
     }, (r) {
       isLoading(false);
@@ -334,25 +372,26 @@ class CameraPageController extends BaseController {
   void updateDirection(DamageAssessmentResponse? value) {
     if (Get.isRegistered<FolderDetailController>()) {
       final folderDetailController = Get.find<FolderDetailController>();
-      var images = folderDetailController.imageInfo.value?.images ?? [];
-      images.removeWhere(
-        (element) =>
-            element.directionSlug == argument?.carPartDirectionEnum.excelId ||
-            element.directionId == argument?.carPartDirectionEnum.id.toString(),
-      );
-      images.add(BuyMeImage(
-        imageId: value?.imageId?.toString(),
-        directionId: argument?.carPartDirectionEnum.id.toString(),
-        directionName: argument?.carPartDirectionEnum.buyMeTitle,
-        directionSlug: value?.result?.extraInfor?.imageDirection ??
-            argument?.carPartDirectionEnum.excelId,
-        imageUrl: value?.result?.imgUrl,
-        resizeImageUrl: value?.result?.imgUrl,
-        imageSize: value?.result?.imgSize,
-      ));
+      folderDetailController.getImageInfo();
+      // var images = folderDetailController.imageInfo.value?.images ?? [];
+      // images.removeWhere(
+      //   (element) =>
+      //       element.directionSlug == argument?.carPartDirectionEnum.excelId ||
+      //       element.directionId == argument?.carPartDirectionEnum.id.toString(),
+      // );
+      // images.add(BuyMeImage(
+      //   imageId: value?.imageId?.toString(),
+      //   directionId: argument?.carPartDirectionEnum.id.toString(),
+      //   directionName: argument?.carPartDirectionEnum.buyMeTitle,
+      //   directionSlug: value?.result?.extraInfor?.imageDirection ??
+      //       argument?.carPartDirectionEnum.excelId,
+      //   imageUrl: value?.result?.imgUrl,
+      //   resizeImageUrl: value?.result?.imgUrl,
+      //   imageSize: value?.result?.imgSize,
+      // ));
 
-      folderDetailController.imageInfo.value =
-          BuyMeImageResponse(images: images);
+      // folderDetailController.imageInfo.value =
+      //     BuyMeImageResponse(images: images);
     }
   }
 }

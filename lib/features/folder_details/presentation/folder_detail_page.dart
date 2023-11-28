@@ -44,6 +44,12 @@ class _FolderDetailPageState
   }
 
   @override
+  void initState() {
+    super.initState();
+    controller.claimId = widget.claimFolderId;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -51,6 +57,7 @@ class _FolderDetailPageState
         elevation: 0.7,
       ),
       body: LoadingView<FolderDetailController>(
+        isCustomLoading: true,
         child: Column(
           children: [
             Expanded(
@@ -168,9 +175,13 @@ class _FolderDetailPageState
               decoration: const BoxDecoration(color: Colors.white),
               child: Obx(
                 () => CButton(
-                  isDisable: controller.imageInfo.value != null,
-                  onPressed: () => widget.onViewResultCallBack
-                      ?.call(controller.imageInfo.value?.images),
+                  isDisable:
+                      controller.imageInfo.value?.images?.isNotEmpty != true,
+                  onPressed: () {
+                    widget.onViewResultCallBack
+                        ?.call(controller.imageInfo.value?.images);
+                    Navigator.pop(context);
+                  },
                   title: AppString.viewResult,
                 ),
               ),

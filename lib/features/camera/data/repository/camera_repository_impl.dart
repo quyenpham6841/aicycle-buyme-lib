@@ -45,7 +45,10 @@ class CameraRepositoryImpl implements CameraRepository {
         utcTimeCreated: utcTimeCreated,
         uploadLocation: uploadLocation,
       ).request();
-      return right(DamageAssessmentResponse.fromJson(res));
+      if (res is List) {
+        return right(DamageAssessmentResponse.fromJson(res[0]));
+      }
+      return right(DamageAssessmentResponse.fromJson(res ?? res[0]));
     } catch (e) {
       if (e is APIErrors) {
         return Left(e);

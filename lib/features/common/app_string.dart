@@ -8,4 +8,5 @@ class AppString {
   static const showLess = 'Ẩn bớt';
   static const invalidImage = 'Ảnh không hợp lệ';
   static const pleaseWait = 'Vui lòng chờ khởi tạo hồ sơ...';
+  static const error = 'Lỗi';
 }

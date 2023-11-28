@@ -20,23 +20,27 @@ class BuyMePreviewImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: double.maxFinite,
-      width: double.maxFinite,
-      color: Colors.black,
+      width: double.maxFinite, color: Colors.black,
+      // decoration: BoxDecoration(
+      //   color: Colors.black,
+      //   image: DecorationImage(
+      //     image: FileImage(file),
+      //     fit: BoxFit.contain,
+      //     onError: (exception, stackTrace) {
+      //       print(exception);
+      //     },
+      //   ),
+      // ),
+      // child: (retake != null) ? _retake(context) : null,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          SizedBox.expand(
-            child: InteractiveViewer(
-              maxScale: 3,
-              minScale: 1,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Image.file(
-                  file,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+          Image.file(
+            file,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(child: Icon(Icons.error));
+            },
           ),
           // _confirmSave(),
           if (retake != null) _retake(context),
@@ -52,8 +56,8 @@ class BuyMePreviewImage extends StatelessWidget {
         color: Colors.transparent,
         child: Container(
           margin: EdgeInsets.only(
-            bottom: 16,
-            right: 16 + MediaQuery.of(context).padding.bottom,
+            bottom: 32,
+            right: 32 + MediaQuery.of(context).padding.bottom,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
