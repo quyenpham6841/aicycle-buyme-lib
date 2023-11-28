@@ -16,6 +16,7 @@ import '../../common/themes/c_textstyle.dart';
 import 'controller/camera_page_controller.dart';
 import 'widgets/buy_me_camera_bottom_bar.dart';
 // import 'widgets/buy_me_preview_image.dart';
+import 'widgets/buy_me_preview_image.dart';
 import 'widgets/error_dialog.dart';
 import 'widgets/guide_frame.dart';
 import 'widgets/warning_dialog.dart';
@@ -165,22 +166,19 @@ class _CameraPageState extends BaseState<CameraPage, CameraPageController> {
                       // }
                       return Stack(
                         children: [
-                          // Center(
-                          //   child: RotatedBox(
-                          //     quarterTurns: (Platform.isAndroid &&
-                          //             controller.isFromGallery.isFalse)
-                          //         ? 0
-                          //         : 1,
-                          //     // controller.isFromGallery.isTrue ? 1 : 0,
-                          //     child: BuyMePreviewImage(
-                          //       file: File(controller.previewFile()!.path),
-                          //       retake: controller.showRetake()
-                          //           ? controller.retakePhoto
-                          //           : null,
-                          //       save: () {},
-                          //     ),
-                          //   ),
-                          // ),
+                          if (controller.isFromGallery.isTrue)
+                            Center(
+                              child: RotatedBox(
+                                quarterTurns: 1,
+                                child: BuyMePreviewImage(
+                                  file: File(controller.previewFile()!.path),
+                                  retake: controller.showRetake()
+                                      ? controller.retakePhoto
+                                      : null,
+                                  save: () {},
+                                ),
+                              ),
+                            ),
                           if (controller.isResizing())
                             RotatedBox(
                               quarterTurns: 1,

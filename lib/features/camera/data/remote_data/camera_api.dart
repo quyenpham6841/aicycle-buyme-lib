@@ -34,6 +34,7 @@ class CameraAPI extends APIRequest {
             "location": locationName,
             "requestedTime": utcTimeCreated,
             "uploadLocation": uploadLocation,
+            "isValidate": true,
           },
         );
 
