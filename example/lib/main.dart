@@ -39,6 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
     externalClaimIdController.text = "101";
   }
 
+  final String token = 'Liên hệ AICycle để lấy token';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,11 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             );
                           },
                           argument: AiCycleBuyMeArgument(
-                            externalClaimId: '101',
-                            // apiToken: '31382861-5254-49b0-a1a1-61bc092a1f50'
-                            apiToken:
-                                '7adbbf78-a400-4953-9dbc-35abd1699dc3', // stage
-                          ),
+                              externalClaimId: externalClaimIdController.text,
+                              apiToken: '31382861-5254-49b0-a1a1-61bc092a1f50'
+                              // apiToken:
+                              //     '7adbbf78-a400-4953-9dbc-35abd1699dc3', // stage
+                              ),
                         ),
                       ),
                     );

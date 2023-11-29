@@ -35,7 +35,7 @@ class AicycleBuyMeRepositoryImpl implements AiCycleBuyMeRepository {
       if (e is APIErrors) {
         return Left(e);
       } else {
-        return Left(FetchDataError('System error'));
+        return Left(FetchDataError(e.toString()));
       }
     }
   }
@@ -52,7 +52,7 @@ class AicycleBuyMeRepositoryImpl implements AiCycleBuyMeRepository {
       if (e is APIErrors) {
         return Left(e);
       } else {
-        return Left(FetchDataError('System error'));
+        return Left(FetchDataError(e.toString()));
       }
     }
   }
