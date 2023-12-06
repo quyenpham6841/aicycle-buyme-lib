@@ -30,6 +30,9 @@ class AicycleBuyMeRepositoryImpl implements AiCycleBuyMeRepository {
         vehicleBrandId: vehicleBrandId,
         vehicleLicensePlates: vehicleLicensePlates,
       ).request();
+      if (res is List) {
+        return Right(ClaimFolderModel.fromJson(res[0]));
+      }
       return Right(ClaimFolderModel.fromJson(res));
     } catch (e) {
       if (e is APIErrors) {
