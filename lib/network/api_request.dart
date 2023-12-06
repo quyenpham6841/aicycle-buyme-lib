@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../features/aicycle_buy_me/presentation/aicycle_buy_me.dart';
 import 'api_provider.dart';
 import 'endpoints.dart';
 
@@ -30,7 +31,7 @@ class APIRequest {
     this.isMultiLanguage = true,
   }) {
     final baseHeaders = {
-      // if (AuthLocal.token != null) 'Authorization': "Bearer ${AuthLocal.token}",
+      if (apiToken != null) 'Authorization': "Bearer $apiToken",
       if (isMultiLanguage) "lang": Get.locale?.languageCode ?? "vi",
     };
     this.headers = baseHeaders;

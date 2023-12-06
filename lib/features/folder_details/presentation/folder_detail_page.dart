@@ -12,12 +12,21 @@ import '../../common/base_widget.dart';
 import '../../common/c_button.dart';
 import '../../common/c_loading_view.dart';
 import '../../common/themes/c_colors.dart';
-import '../controller/folder_detail_controller.dart';
+import '../data/models/buy_me_image_model.dart';
+import 'widgets/controller/folder_detail_controller.dart';
 import 'widgets/car_position.dart';
 import 'widgets/is_one_car_widget.dart';
 
 class FolderDetailPage extends StatefulWidget {
-  const FolderDetailPage({super.key});
+  const FolderDetailPage({
+    super.key,
+    required this.claimFolderId,
+    required this.externalClaimId,
+    this.onViewResultCallBack,
+  });
+  final String claimFolderId;
+  final String externalClaimId;
+  final Function(List<BuyMeImage>? images)? onViewResultCallBack;
 
   @override
   State<FolderDetailPage> createState() => _FolderDetailPageState();
@@ -35,6 +44,12 @@ class _FolderDetailPageState
   }
 
   @override
+  void initState() {
+    super.initState();
+    controller.claimId = widget.claimFolderId;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -42,6 +57,7 @@ class _FolderDetailPageState
         elevation: 0.7,
       ),
       body: LoadingView<FolderDetailController>(
+        isCustomLoading: true,
         child: Column(
           children: [
             Expanded(
@@ -88,13 +104,15 @@ class _FolderDetailPageState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CarPosition(
+                                    claimFolderId: widget.claimFolderId,
                                     direction: CarPartDirectionEnum.d45LeftBack,
-                                    images: controller.images.value,
+                                    images: controller.imageInfo.value?.images,
                                   ),
                                   CarPosition(
+                                    claimFolderId: widget.claimFolderId,
                                     direction:
                                         CarPartDirectionEnum.d45RightBack,
-                                    images: controller.images.value,
+                                    images: controller.imageInfo.value?.images,
                                   ),
                                 ],
                               ),
@@ -106,7 +124,8 @@ class _FolderDetailPageState
                             left: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                claimFolderId: widget.claimFolderId,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.leftProd,
                               ),
                             ),
@@ -118,7 +137,8 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                claimFolderId: widget.claimFolderId,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45LeftFront,
                               ),
                             ),
@@ -130,7 +150,8 @@ class _FolderDetailPageState
                             top: 0,
                             child: Obx(
                               () => CarPosition(
-                                images: controller.images.value,
+                                claimFolderId: widget.claimFolderId,
+                                images: controller.imageInfo.value?.images,
                                 direction: CarPartDirectionEnum.d45RightFront,
                               ),
                             ),
@@ -152,9 +173,17 @@ class _FolderDetailPageState
                 bottom: 32,
               ),
               decoration: const BoxDecoration(color: Colors.white),
-              child: CButton(
-                onPressed: () {},
-                title: AppString.viewResult,
+              child: Obx(
+                () => CButton(
+                  isDisable:
+                      controller.imageInfo.value?.images?.isNotEmpty != true,
+                  onPressed: () {
+                    widget.onViewResultCallBack
+                        ?.call(controller.imageInfo.value?.images);
+                    Navigator.pop(context);
+                  },
+                  title: AppString.viewResult,
+                ),
               ),
             ),
           ],

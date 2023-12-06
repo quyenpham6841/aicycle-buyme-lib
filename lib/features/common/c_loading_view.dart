@@ -20,12 +20,14 @@ class LoadingView<T> extends StatelessWidget {
     this.color,
     this.tag,
     this.isCustomLoading = false,
+    this.quarterTurns = 0,
   });
   final Widget? child;
   final bool showBackground;
   final Color? color;
   final String? tag;
   final bool isCustomLoading;
+  final int quarterTurns;
 
   T get controller => GetInstance().find<T>(tag: tag)!;
 
@@ -54,40 +56,45 @@ class LoadingView<T> extends StatelessWidget {
                   ),
                   child: CLoading(color: color),
                 )
-              : Container(
-                  height: 154,
-                  width: double.maxFinite,
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.all(40),
-                  decoration: BoxDecoration(
-                    color: showBackground
-                        ? const Color.fromRGBO(253, 251, 253, 1)
-                        : CColors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: showBackground
-                        ? [
-                            BoxShadow(
-                              offset: const Offset(0, 4),
-                              blurRadius: 6,
-                              color: CColors.black.withOpacity(0.08),
-                            )
-                          ]
-                        : null,
-                  ),
-                  child: Column(
-                    children: [
-                      Assets.gif.loading.image(
-                        height: 80,
-                        fit: BoxFit.contain,
-                        package: packageName,
-                      ),
-                      const Gap(8),
-                      Text(
-                        'Đang xử lý dữ liệu, vui lòng chờ.',
-                        style: CTextStyles.base.s14.w500(),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
+              : RotatedBox(
+                  quarterTurns: quarterTurns,
+                  child: Container(
+                    height: 154,
+                    width: quarterTurns == 0 || quarterTurns == 2
+                        ? double.maxFinite
+                        : 300,
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.all(40),
+                    decoration: BoxDecoration(
+                      color: showBackground
+                          ? const Color.fromRGBO(253, 251, 253, 1)
+                          : CColors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: showBackground
+                          ? [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                blurRadius: 6,
+                                color: CColors.black.withOpacity(0.08),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: Column(
+                      children: [
+                        Assets.gif.loading.image(
+                          height: 80,
+                          fit: BoxFit.contain,
+                          package: packageName,
+                        ),
+                        const Gap(8),
+                        Text(
+                          'Đang xử lý dữ liệu, vui lòng chờ.',
+                          style: CTextStyles.base.s14.w500(),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
+                    ),
                   ),
                 ),
         ),

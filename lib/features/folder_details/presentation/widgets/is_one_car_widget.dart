@@ -8,7 +8,7 @@ import 'package:gap/gap.dart';
 
 import '../../../../enum/check_car_state.dart';
 import '../../../../generated/assets.gen.dart';
-import '../../../../types/check_car_model.dart';
+import '../../data/models/check_car_model.dart';
 
 class IsOneCarWidget extends StatelessWidget {
   final CheckCarModel? checkCarModel;

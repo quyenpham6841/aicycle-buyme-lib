@@ -8,4 +8,5 @@ enum AppState {
   failed,
   redirect,
   pop,
+  customError,
 }

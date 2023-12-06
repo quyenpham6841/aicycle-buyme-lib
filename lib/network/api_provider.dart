@@ -97,7 +97,12 @@ class APIProvider {
           : 'Fetch data error';
       switch (response.statusCode) {
         case 400:
-          throw BadRequestError(message, code: response.statusCode);
+          throw BadRequestError(
+            message,
+            code: response.statusCode,
+            errorCodeFromEngine:
+                int.tryParse(response.data['errorCodeFromEngine'].toString()),
+          );
         case 401:
           throw UnauthorizedError(message);
         case 403:
@@ -107,7 +112,12 @@ class APIProvider {
         case 500:
           throw InternalServerError(message, code: response.statusCode);
         default:
-          throw FetchDataError(message, code: response.statusCode);
+          throw FetchDataError(
+            message,
+            code: response.statusCode,
+            errorCodeFromEngine:
+                int.tryParse(response.data['errorCodeFromEngine'].toString()),
+          );
       }
     }
     if (response.data is! Map) {

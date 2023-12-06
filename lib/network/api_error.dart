@@ -6,12 +6,14 @@ abstract class APIErrors implements Exception {
   final message;
   final details;
   final bool showLog;
+  final int? errorCodeFromEngine;
 
   APIErrors({
     this.code,
     this.message,
     this.details,
     this.showLog = true,
+    this.errorCodeFromEngine,
   }) {
     if (showLog) {
       logger.e(
@@ -28,11 +30,12 @@ abstract class APIErrors implements Exception {
 }
 
 class FetchDataError extends APIErrors {
-  FetchDataError(String? details, {dynamic code})
+  FetchDataError(String? details, {dynamic code, int? errorCodeFromEngine})
       : super(
           code: code ?? "Fetch data error",
           message: details ?? "Fetch data error",
           details: details ?? "Fetch data error",
+          errorCodeFromEngine: errorCodeFromEngine,
         );
 }
 
@@ -46,11 +49,12 @@ class NoInternetError extends APIErrors {
 }
 
 class BadRequestError extends APIErrors {
-  BadRequestError(String? details, {dynamic code})
+  BadRequestError(String? details, {dynamic code, int? errorCodeFromEngine})
       : super(
           code: code ?? "Bad request",
           message: "Bad request",
           details: details ?? "Bad request",
+          errorCodeFromEngine: errorCodeFromEngine,
         );
 }
 

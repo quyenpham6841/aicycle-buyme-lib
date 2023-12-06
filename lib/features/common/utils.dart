@@ -1,11 +1,19 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../../aicycle_buyme_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:image/image.dart' as img;
 
 import '../../generated/assets.gen.dart';
 import '../../network/api_error.dart';
+import 'logger.dart';
 import 'themes/c_colors.dart';
 import 'themes/c_textstyle.dart';
 
@@ -14,6 +22,53 @@ enum SnackBarType { success, error, info, warning }
 class Utils {
   Utils._();
   static final Utils instance = Utils._();
+
+  static Future<XFile> compressImage(XFile source, int quality,
+      {Function(Size)? imageSizeCallBack, bool fromGallery = false}) async {
+    File sourceFile = File(source.path);
+    try {
+      img.Image? input = await img.decodeJpgFile(source.path);
+      // rotate image if android because camera image is landscape
+      if (input == null) {
+        return source;
+      }
+      if (Platform.isAndroid && !fromGallery) {
+        input = img.copyRotate(input, angle: 90);
+      }
+      int imageWidth = input.width;
+      int imageHeight = input.height;
+      input = img.copyResize(
+        input,
+        width: imageWidth > imageHeight ? 1600 : 1200,
+        height: imageWidth > imageHeight ? 1200 : 1600,
+        maintainAspect: true,
+      );
+      final dirPath = (await getTemporaryDirectory()).path;
+      final imagePath = '$dirPath/${basename(source.path)}';
+      var compressedXFile = XFile.fromData(
+        img.encodeJpg(input, quality: quality),
+        path: imagePath,
+      );
+      await compressedXFile.saveTo(imagePath);
+      var fileLength = await compressedXFile.length();
+      // Nếu vẫn lớn hơn 2MB thì giảm chất lượng ảnh
+      if (fileLength > 2000000) {
+        return await compressImage(compressedXFile, 90);
+      }
+      // var compressedSize = await _calculateImageSize(compressedFile);
+      logger.i(
+        'Resize successfully: ${sourceFile.readAsBytesSync().lengthInBytes / 1000000}MB to ${fileLength / 1000000}MB',
+      );
+      logger.i(
+        'Resize successfully:${imageWidth}x$imageHeight => ${input.width}x${input.height}',
+      );
+      imageSizeCallBack
+          ?.call(Size(input.width.toDouble(), input.height.toDouble()));
+      return compressedXFile;
+    } catch (e) {
+      return source;
+    }
+  }
 
   static void dismissKeyboard() => Get.focusScope?.unfocus();
 
